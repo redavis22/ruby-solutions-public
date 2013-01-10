@@ -1,14 +1,5 @@
-class TicTacToe
-  class IllegalMoveError < RuntimeError
-  end
-
-  def initialize(player1, player2)
-    @turn = :x
-    @players = {
-      :x => player1,
-      :o => player2
-    }
-
+class Board
+  def initialize
     @rows = [
       [nil, nil, nil],
       [nil, nil, nil],
@@ -16,22 +7,28 @@ class TicTacToe
     ]
   end
 
+  def empty?(pos)
+    mark_at(pos).nil?
+  end
+
   def place_mark(pos, mark)
     x, y = pos[0], pos[1]
-
-    raise IllegalMoveError.new("Space already taken") unless @rows[x][y].nil?
     @rows[x][y] = mark
+  end
 
-    self
+  def mark_at(pos)
+    x, y = pos[0], pos[1]
+    @rows[x][y]
   end
 
   def rows
-    @rows
+    # deep dup inner rows so users can place marks willy-nilly.
+    @rows.map(&:dup)
   end
 
   def cols
     cols = [[], [], []]
-    rows.each do |row|
+    @rows.each do |row|
       row.each_with_index do |mark, col|
         cols[col] << mark
       end
@@ -51,24 +48,49 @@ class TicTacToe
     end
   end
 
-  def won?
-    not winner.nil?
-  end
-
   def winner
     (rows + cols + diagonals).any? do |triple|
       if [[:x] * 3, [:o] * 3].include?(triple)
         mark = triple[0]
-        return @players[mark]
+        return mark
       end
     end
 
     nil
   end
+end
+
+class TicTacToe
+  class IllegalMoveError < RuntimeError
+  end
+
+  def initialize(player1, player2)
+    @turn = :x
+    @players = {
+      :x => player1,
+      :o => player2
+    }
+
+    @board = Board.new
+  end
+
+  def place_mark(pos, mark)
+    if @board.empty?(pos)
+      @board.place_mark(pos, mark)
+    else
+      raise IllegalMoveError.new("Space already taken")
+    end
+
+    self
+  end
+
+  def won?
+    not @board.winner.nil?
+  end
 
   def show
-    # not very pretty!
-    @rows.each { |row| p row }
+    # not very pretty printing!
+    @board.rows.each { |row| p row }
   end
 
   def play_turn
@@ -84,7 +106,8 @@ class TicTacToe
       play_turn
     end
 
-    puts "#{winner.name} won the game!"
+    winning_player = @players[@board.winner]
+    puts "#{winning_player.name} won the game!"
   end
 end
 
