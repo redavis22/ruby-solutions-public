@@ -1,10 +1,18 @@
 class Board
-  def initialize
-    @rows = [
+  def self.blank_grid
+    [
       [nil, nil, nil],
       [nil, nil, nil],
       [nil, nil, nil]
     ]
+  end
+
+  def initialize(rows = Board.blank_grid)
+    @rows = rows
+  end
+
+  def dup
+    Board.new(rows)
   end
 
   def empty?(pos)
@@ -74,6 +82,12 @@ class TicTacToe
     @board = Board.new
   end
 
+  def board
+    # let player look directly at board, but make sure it's a copy so
+    # his modifications don't futz with our copy.
+    @board.dup
+  end
+
   def place_mark(pos, mark)
     if @board.empty?(pos)
       @board.place_mark(pos, mark)
@@ -102,7 +116,6 @@ class TicTacToe
 
   def run
     until won?
-      show
       play_turn
     end
 
@@ -120,7 +133,7 @@ class HumanPlayer
 
   def move(game, mark)
     while true
-      x, y = get_coords
+      x, y = get_coords(game)
       break if set_move(game, mark, [x, y])
     end
   end
@@ -130,7 +143,8 @@ class HumanPlayer
     [x, y].all? { |coord| (0..2).include?(coord) }
   end
 
-  def get_coords
+  def get_coords(game)
+    game.show
     while true
       puts "#{@name}: please select your space"
       x, y = gets.chomp.split(",").map(&:to_i)
@@ -149,6 +163,53 @@ class HumanPlayer
     rescue TicTacToe::IllegalMoveError
       puts "Illegal move!"
       false
+    end
+  end
+end
+
+class ComputerPlayer
+  attr_reader :name
+
+  def initialize
+    @name = "Tandy 400"
+  end
+
+  def move(game, mark)
+    m = nil
+    if winner_move(game, mark).nil?
+      m = random_move(game, mark)
+    else
+      m = winner_move(game, mark)
+    end
+
+    game.place_mark(m, mark)
+  end
+
+  private
+  def winner_move(game, mark)
+    (0..2).each do |x|
+      (0..2).each do |y|
+        board = game.board
+        pos = [x, y]
+
+        next unless board.empty?(pos)
+        board.place_mark(pos, mark)
+
+        return pos if board.winner == mark
+      end
+    end
+
+    # no winning move
+    nil
+  end
+
+  def random_move(game, mark)
+    board = game.board
+    while true
+      range = (0..2).to_a
+      pos = [range.sample, range.sample]
+
+      return pos if board.empty?(pos)
     end
   end
 end
