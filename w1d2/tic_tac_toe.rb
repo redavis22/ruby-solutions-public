@@ -89,28 +89,43 @@ class TicTacToe
 end
 
 class HumanPlayer
+  attr_reader :name
+
   def initialize(name)
     @name = name
   end
 
   def move(game, mark)
     while true
-      puts "#{@name}: please select your space"
+      x, y = get_coords
+      break if set_move(game, mark, [x, y])
+    end
+  end
 
+  private
+  def self.valid_coord?(x, y)
+    [x, y].all? { |coord| (0..2).include?(coord) }
+  end
+
+  def get_coords
+    while true
+      puts "#{@name}: please select your space"
       x, y = gets.chomp.split(",").map(&:to_i)
-      if [x, y].all? { |coord| (0..2).include?(coord) }
-        begin
-          game.place_mark([x, y], mark)
-        rescue TicTacToe::IllegalMoveError
-          puts "Illegal move!"
-          next
-        end
-        break
+      if HumanPlayer.valid_coord?(x, y)
+        return [x, y]
       else
-        # repeat if input invalid
-        puts "Invalid input!"
-        next
+        puts "Invalid coordinate!"
       end
+    end
+  end
+
+  def set_move(game, mark, pos)
+    begin
+      game.place_mark(pos, mark)
+      true
+    rescue TicTacToe::IllegalMoveError
+      puts "Illegal move!"
+      false
     end
   end
 end
