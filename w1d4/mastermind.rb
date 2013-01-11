@@ -1,5 +1,3 @@
-require 'debugger'
-
 class Mastermind
   PEGS = [:red, :green, :blue, :yellow, :orange, :purple]
   MAX_TURNS = 10
