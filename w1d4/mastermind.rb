@@ -46,23 +46,29 @@ class Mastermind
   end
 
   private
-
   def get_guess
-    puts "Guess the code:"
-
-    guess = nil
     while true
-      guess = []
-      gets.chomp.split(//).each do |letter|
-        peg = INPUT_CHARS[letter.upcase]
-        # what if invalid peg?
-        guess << peg
+      puts "Guess the code:"
+      guess = parse_guess(gets.chomp)
+
+      if guess.nil?
+        puts "Invalid guess!"
+      else
+        return guess
       end
-
-      break
     end
+  end
 
-    p guess
+  def parse_guess(guess_string)
+    guess = []
+    guess_string.split(//).each do |letter|
+      peg = INPUT_CHARS[letter.upcase]
+
+      # uh-oh, this char was invalid
+      return nil if peg.nil?
+
+      guess << peg
+    end
 
     guess
   end
