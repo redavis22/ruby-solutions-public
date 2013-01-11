@@ -1,9 +1,13 @@
 def set_add_el(set, el)
   set[el] = true
+
+  set
 end
 
 def set_remove_el(set, el)
   set.delete(el)
+
+  set
 end
 
 def set_list_els(set)
@@ -11,7 +15,7 @@ def set_list_els(set)
 end
 
 def set_member?(set, el)
-  set[el].nil?
+  not set[el].nil?
 end
 
 def set_union(set1, set2)
