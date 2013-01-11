@@ -8,15 +8,17 @@ def my_each(array)
     yield(array[i])
   end
 
+  # return original array
   array
 end
 
 def median(nums)
+  # sort the numbers; notice that I don't modify nums at all.
   sorted_nums = nums.sort
   while sorted_nums.count > 2
-    # remove from front
+    # remove smallest
     sorted_nums.shift
-    # remove from back
+    # remove largest
     sorted_nums.pop
   end
 
@@ -25,7 +27,7 @@ def median(nums)
 end
 
 def concatenate_strings(strings)
-  strings.inject do |total, string|
+  strings.inject("") do |total, string|
     total + string
   end
 end
