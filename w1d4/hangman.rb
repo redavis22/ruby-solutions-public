@@ -17,6 +17,7 @@ class Hangman
     while @tries < MAX_TRIES
       guess = @guesser.guess(@current_board.dup)
       response =  @referee.check_guess(guess)
+      @guesser.handle_response(guess, response)
       update_board(guess, response)
 
       if @current_board.all?
@@ -59,9 +60,23 @@ class HumanPlayer
     # didn't check for bogus input here; got lazy :-)
     positions = gets.chomp.split(",").map(&:to_i)
   end
+
+  def handle_response(guess, response)
+    # don't really need to do anything here...
+  end
 end
 
 class ComputerPlayer
+  def initialize(dictionary)
+    @candidate_words = dictionary.dup
+    @previous_guesses = []
+  end
+
+  def inspect
+    # super hack just so I don't see the dictionary
+    "Don't show me dictionary!"
+  end
+
   def pick_secret_word
     @secret_word = "secrets"
 
@@ -76,5 +91,40 @@ class ComputerPlayer
     end
 
     response
+  end
+
+  def guess(board)
+    freq_table = freq_table(board)
+    top_letter, top_count = freq_table.sort_by { |letter, count| count }.last
+
+    top_letter
+  end
+
+  def handle_response(guess, response_indices)
+    if response_indices.empty?
+      @candidate_words.delete_if { |word| word.include?(guess) }
+    else
+      @candidate_words.delete_if do |word|
+        response_indices.any? do |index|
+          word[index] != guess
+        end
+      end
+    end
+  end
+
+  private
+  def freq_table(board)
+    # this makes 0 the default value; see the RubyDoc.
+    freq_table = Hash.new(0)
+    @candidate_words.each do |word|
+      board.each_with_index do |letter, index|
+        # only count letters at missing positions
+        next unless letter.nil?
+
+        freq_table[word[index]] += 1
+      end
+    end
+
+    freq_table
   end
 end
