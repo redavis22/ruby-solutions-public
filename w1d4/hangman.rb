@@ -39,6 +39,26 @@ class HumanPlayer
     puts "Input guess:"
     gets.chomp
   end
+
+  def pick_secret_word
+    while true
+      puts "Think of a secret word; how long is it?"
+      len = gets.chomp.to_i
+
+      if len > 0
+        return len
+      else
+        puts "Invalid length!"
+      end
+    end
+  end
+
+  def check_guess(guess)
+    puts "Player guessed #{guess}"
+    puts "What positions does that occur at?"
+
+    positions = gets.chomp.split(",").map(&:to_i)
+  end
 end
 
 class ComputerPlayer
