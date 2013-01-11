@@ -72,7 +72,7 @@ class Board
     return false if won?
 
     # no empty space?
-    @rows.none? { |row| row.none? { |el| el.nil? }}
+    @rows.all? { |row| row.none? { |el| el.nil? }}
   end
 
   def winner
