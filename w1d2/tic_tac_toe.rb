@@ -12,6 +12,8 @@ class Board
   end
 
   def dup
+    # remember that `#rows` dups the rows too, so modifications to the
+    # new board won't affect the old board.
     Board.new(rows)
   end
 
@@ -30,7 +32,8 @@ class Board
   end
 
   def rows
-    # deep dup inner rows so users can place marks willy-nilly.
+    # deep dup inner rows so that changes to this array won't be
+    # reflected in board.
     @rows.map(&:dup)
   end
 
@@ -50,10 +53,26 @@ class Board
     up_diag = [[0, 2], [1, 1], [2, 0]]
 
     [down_diag, up_diag].map do |diag|
-      # convert positions to marks; see the destructuring link in the
-      # method decomposition chapter.
+      # Note the `(x,y)` inside the block; this unpacks, or
+      # "destructures" the argument. Read more here:
+      # http://tony.pitluga.com/2011/08/08/destructuring-with-ruby.html
       diag.map { |(x, y)| @rows[x][y] }
     end
+  end
+
+  def over?
+    won? or drawn?
+  end
+
+  def won?
+    not winner.nil?
+  end
+
+  def drawn?
+    return false if won?
+
+    # no empty space?
+    @rows.none? { |row| row.none? { |el| el.nil? }}
   end
 
   def winner
@@ -98,10 +117,6 @@ class TicTacToe
     self
   end
 
-  def won?
-    not @board.winner.nil?
-  end
-
   def show
     # not very pretty printing!
     @board.rows.each { |row| p row }
@@ -111,16 +126,21 @@ class TicTacToe
     current_player = @players[@turn]
     current_player.move(self, @turn)
 
+    # swap next who's turn it will be next
     @turn = ((@turn == :x) ? :o : :x)
   end
 
   def run
-    until won?
+    until @board.over?
       play_turn
     end
 
-    winning_player = @players[@board.winner]
-    puts "#{winning_player.name} won the game!"
+    if @board.won?
+      winning_player = @players[@board.winner]
+      puts "#{winning_player.name} won the game!"
+    else
+      puts "No one wins!"
+    end
   end
 end
 
