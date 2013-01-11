@@ -31,6 +31,9 @@ def caesar(string, shift)
   # code. `Fixnum#chr` does the opposite translation from ASCII code
   # to string letter.
 
+  # only works on downcased words
+  string = string.downcase
+
   encoded_string = ""
   string.each_byte do |ascii|
     # letter_pos is the position of the letter in the alphabet. "a" is
@@ -43,4 +46,6 @@ def caesar(string, shift)
     # convert back to string format
     encoded_string += ("a".ord + shifted_letter_pos).chr
   end
+
+  encoded_string
 end
