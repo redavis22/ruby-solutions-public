@@ -5,8 +5,8 @@ class Hangman
     @guesser, @referee = guesser, referee
   end
 
-  def update_board(guess, response)
-    response.each { |index| @current_board[index] = guess }
+  def update_board(guess, indices)
+    indices.each { |index| @current_board[index] = guess }
   end
 
   def play
@@ -15,13 +15,14 @@ class Hangman
     @current_board = [nil] * secret_length
 
     while @tries < MAX_TRIES
+      p @current_board
+
       guess = @guesser.guess
       response =  @referee.check_guess(guess)
       update_board(guess, response)
 
-      p response
-      p @current_board
       if @current_board.all?
+        p @current_board
         puts "Guesser wins!"
         break
       end
