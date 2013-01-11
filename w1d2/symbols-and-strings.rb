@@ -13,4 +13,6 @@ def super_print(string, options = {})
   options[:times].times do
     puts string
   end
+
+  nil
 end
