@@ -9,7 +9,7 @@ end
 
 def factors(num)
   fs = []
-  num.times do |i|
+  (1..num).each do |i|
     fs << i if (num % i == 0)
   end
 
@@ -49,9 +49,9 @@ end
 def substrings(string)
   subs = []
 
-  string.count.times do |sub_start|
-    ((sub_start + 1)...(string.count)).each do |sub_end|
-      subs << string[sub_start..sub_end]
+  string.length.times do |sub_start|
+    ((sub_start + 1)..(string.length)).each do |sub_end|
+      subs << string[sub_start...sub_end]
     end
   end
 
@@ -62,4 +62,16 @@ def subwords(word, dictionary_filename)
   dictionary_words = File.readlines(dictionary_filename).map(&:chomp)
 
   substrings(word).select { |substring| dictionary_words.include?(substring) }
+end
+
+require 'set'
+def faster_subwords(word, dictionary_filename)
+  # compare for length 100 word
+  dictionary_words_array = File.readlines(dictionary_filename).map(&:chomp)
+
+  # this will turn the array into a `Set` object; `Set#include?` is
+  # much faster.
+  dictionary_words_set = Set.new(dictionary_words_array)
+
+  substrings(word).select { |substring| dictionary_words_set.include?(substring) }
 end
