@@ -13,7 +13,7 @@ def two_sum(array)
       return true if array.include?(-1 * num)
     else
       # -1 * 0 == 0; array includes at least one zero (this num here),
-      # -but does it contain a second?
+      # but does it contain a second?
       return true if array.count(0) > 1
     end
   end
@@ -34,17 +34,16 @@ class TowersOfHanoi
   def display
     max_height = @stacks.map(&:count).max
 
-    max_height.times do |height|
+    (max_height - 1).downto(0) do |height|
       @stacks.each do |stack|
         # this || trick says that if stack[height] is `nil` (that is,
         # the stack isn't that high), print `" "` instead of `nil`,
-        # because we need a blank space. Try for yourself to see what
-        # happens if we leave out `|| " "`.
+        # because we need a blank space.
         print (stack[height] || " ")
         print "\t"
       end
 
-      # just want a newline
+      # print the newline to end this row
       puts
     end
     puts "a\tb\tc"
@@ -60,9 +59,9 @@ class TowersOfHanoi
     to_stack.push(from_stack.pop)
 
     # what should `move` return? Perhaps `nil`, since we only call
-    # `move` for its side-effect. But returning `self` is also common,
-    # this let's us *chain* calls to `move`: `towers.move(1, 2).move(0,
-    # 1).move(3, 0)`.
+    # `move` for its side-effect. But returning `self` is also common
+    # with side-effect methods, this let's us *chain* calls to `move`:
+    # `towers.move(1, 2).move(0, 1).move(3, 0)`.
     self
   end
 
@@ -71,7 +70,8 @@ class TowersOfHanoi
   end
 
   def run_game
-    # I wrote this last; I always write the user input last
+    # I wrote this last; I often write the user input last, so I can
+    # first test the game in IRB.
 
     until game_won?
       display
@@ -85,6 +85,15 @@ class TowersOfHanoi
     puts "You did it!"
   end
 
+  private
+  def get_move
+    from_stack_num = get_stack("Move from: ")
+    to_stack_num = get_stack("Move to: ")
+
+    # returning two things is normally done via arary
+    [from_stack_num, to_stack_num]
+  end
+
   def get_stack(prompt)
     move_hash = {
       "a" => 0,
@@ -95,21 +104,11 @@ class TowersOfHanoi
     while true
       print prompt
       stack_num = move_hash[gets.chomp]
+      return stack_num unless stack_num.nil?
 
-      if stack_num.nil?
-        puts "Invalid move!"
-        next
-      else
-        return stack_num
-      end
+      # otherwise, try again
+      puts "Invalid move!"
     end
-  end
-
-  def get_move
-    from_stack_num = get_stack("Move from: ")
-    to_stack_num = get_stack("Move to: ")
-
-    [from_stack_num, to_stack_num]
   end
 end
 
@@ -120,6 +119,7 @@ def pick_stocks(prices)
 
   prices.count.times do |buy_date|
     prices.count.times do |sell_date|
+      # can't sell before buy
       next if sell_date < buy_date
 
       profit = prices[sell_date] - prices[buy_date]
