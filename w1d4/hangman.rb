@@ -15,9 +15,7 @@ class Hangman
     @current_board = [nil] * secret_length
 
     while @tries < MAX_TRIES
-      p @current_board
-
-      guess = @guesser.guess
+      guess = @guesser.guess(@current_board.dup)
       response =  @referee.check_guess(guess)
       update_board(guess, response)
 
@@ -35,7 +33,8 @@ class Hangman
 end
 
 class HumanPlayer
-  def guess
+  def guess(board)
+    p board
     puts "Input guess:"
     gets.chomp
   end
@@ -57,6 +56,7 @@ class HumanPlayer
     puts "Player guessed #{guess}"
     puts "What positions does that occur at?"
 
+    # didn't check for bogus input here; got lazy :-)
     positions = gets.chomp.split(",").map(&:to_i)
   end
 end
