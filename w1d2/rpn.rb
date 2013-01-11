@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 
 # The top line tells the shell that this should be runnable as a Ruby
-# script.
+# script. So I should be able to run `./rpn.rb` (after setting the
+# file to "executable" by `chmod +x rpn.rb`).
 
 class RPNCalculator
   def initialize
@@ -10,6 +11,8 @@ class RPNCalculator
 
   def push(num)
     @stack << num
+
+    self
   end
 
   def perform_op(op_sym)
@@ -26,22 +29,27 @@ class RPNCalculator
     when :*
       @stack << left_operand * right_operand
     when :/
-      # `Fixnum#fdiv` is like `/` but makes sure not to round to
-      # nearest integer.
+      # `Fixnum#fdiv` is like `/` but makes sure not to round down.
       @stack << left_operand.fdiv(right_operand)
     else
       @stack << left_op << right_op
       raise ArgumentError.new("No operation #{op_sym}")
     end
 
-    # return self to allow chaining of `perform_op`.
     self
   end
 
   def extract_value
-    raise RuntimeError.new("There are still #{@stack.count} operands left!") if @stack.count != 1
+    case @stack.count
+    when 0
+      raise RuntimeError.new("There are still no operands in the stack.")
+    when 1
+      @stack.pop
+    else
+      raise RuntimeError.new("There are still #{@stack.count} operands left.")
+    end
 
-    @stack.pop
+
   end
 
   def self.evaluate_file(file)
@@ -64,6 +72,8 @@ end
 if __FILE__ == $PROGRAM_NAME
   # only run this in program mode
   if ARGV.empty?
+    # if no file given, read input from the standard input (console)
+    # file
     puts RPNCalculator.evaluate_file($stdin)
   else
     File.open(ARGV[0]) do |file|
