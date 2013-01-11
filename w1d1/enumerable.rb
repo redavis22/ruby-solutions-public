@@ -2,14 +2,16 @@ def multiply_by_two(nums)
   nums.map { |num| num * 2 }
 end
 
-def my_each(array)
-  # using `Array#each` is cheating!`
-  array.count.times do |i|
-    yield(array[i])
-  end
+class Array
+  def my_each
+    # using `Array#each` is cheating!`
+    self.count.times do |i|
+      yield(self[i])
+    end
 
-  # return original array
-  array
+    # return original array
+    self
+  end
 end
 
 def median(nums)
