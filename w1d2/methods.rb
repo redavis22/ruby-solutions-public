@@ -1,7 +1,12 @@
 def rps(choice)
   choices = ["Rock", "Papers", "Scissors"]
 
-  my_choice = choice.sample
+  unless choices.include?(choice)
+    puts "Invalid choice!"
+    return
+  end
+
+  my_choice = choices.sample
 
   if choice == my_choice
     return "#{my_choice}, Draw"
@@ -23,7 +28,7 @@ def swingers(couples)
   women.shuffle!
 
   new_couples = []
-  men.times do |i|
+  men.count.times do |i|
     new_couples << [men[i], women[i]]
   end
 
