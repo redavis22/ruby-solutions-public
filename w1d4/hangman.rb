@@ -5,10 +5,6 @@ class Hangman
     @guesser, @referee = guesser, referee
   end
 
-  def update_board(guess, indices)
-    indices.each { |index| @current_board[index] = guess }
-  end
-
   def play
     @tries = 0
     secret_length = @referee.pick_secret_word
@@ -16,21 +12,37 @@ class Hangman
     @current_board = [nil] * secret_length
 
     while @tries < MAX_TRIES
-      guess = @guesser.guess(@current_board.dup)
-      response =  @referee.check_guess(guess)
-      @guesser.handle_response(guess, response)
-      update_board(guess, response)
+      take_turn
 
-      if @current_board.all?
+      if won?
         p @current_board
         puts "Guesser wins!"
-        break
+        return
       end
 
       @tries += 1
     end
 
-    self
+    puts "Guesser loses!"
+
+    nil
+  end
+
+  private
+  def take_turn
+    guess = @guesser.guess(@current_board.dup)
+    response = @referee.check_guess(guess)
+    update_board(guess, response)
+
+    @guesser.handle_response(guess, response)
+  end
+
+  def update_board(guess, indices)
+    indices.each { |index| @current_board[index] = guess }
+  end
+
+  def won?
+    @current_board.all?
   end
 end
 
@@ -73,17 +85,11 @@ end
 
 class ComputerPlayer
   def initialize(dictionary)
-    @candidate_words = dictionary.dup
-    @previous_guesses = []
-  end
-
-  def inspect
-    # super hack just so I don't see the dictionary
-    "Don't show me dictionary!"
+    @dictionary = dictionary
   end
 
   def pick_secret_word
-    @secret_word = "secrets"
+    @secret_word = @dictionary.sample
 
     @secret_word.length
   end
@@ -99,6 +105,9 @@ class ComputerPlayer
   end
 
   def register_secret_length(length)
+    # begining to play again; reset candidate_words
+    @candidate_words = @dictionary.dup
+
     @candidate_words.select! { |word| word.length == length }
   end
 
@@ -106,9 +115,14 @@ class ComputerPlayer
     # I left this here so you can see it narrow things down.
     p @candidate_words
     freq_table = freq_table(board)
-    top_letter, top_count = freq_table.sort_by { |letter, count| count }.last
 
-    top_letter
+    most_frequent_letters = freq_table.sort_by { |letter, count| count }
+    letter, count = most_frequent_letters.pop
+
+    # we'll never repeat a guess because we
+    #   (1) remove all words with a guessed letter if there are no hits, and
+    #   (2) we only look at unfilled positions when calculating frequency
+    letter
   end
 
   def handle_response(guess, response_indices)
@@ -130,9 +144,7 @@ class ComputerPlayer
     @candidate_words.each do |word|
       board.each_with_index do |letter, index|
         # only count letters at missing positions
-        next unless letter.nil?
-
-        freq_table[word[index]] += 1
+        freq_table[word[index]] += 1 if letter.nil?
       end
     end
 
