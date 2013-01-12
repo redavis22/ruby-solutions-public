@@ -1,3 +1,5 @@
+# I use Ruby's `Set` class for collections I need to call `#include?`
+# on; `#include?` is much faster on a `Set` than an `Array`.
 require 'set'
 
 =begin
@@ -5,22 +7,23 @@ Man is born free, and everywhere he is in chains.
 =end
 class WordChainer
   def self.adjacent_words(word, candidates)
-    # the variable `adjacent_words` *shadows* the method
-    # `adjacent_words`, which means that when we use `adjacent_words`
-    # in the method, it will access the variable and not call the
-    # method. This is common, because side-effect free methods are
-    # often named after the thing they return.
+    # variable name *shadows* (hides) method name; references inside
+    # `adjacent_words` to `adjacent_words` will refer to the variable,
+    # not the method. This is common, because side-effect free methods
+    # are often named after what they return.
     adjacent_words = Set.new
 
-    candidates.each do |candidate|
-      next if candidate.length != word.length
+    # NB: I gained a big speedup by checking to see if small
+    # modifications to the word were in the dictionary, vs checking
+    # every word in the dictionary to see if it was "one away" from
+    # the word. Can you think about why?
+    word.length.times do |index|
+      ("a".."z").each do |letter|
+        new_word = word.dup
+        new_word[index] = letter
 
-      diffs = 0
-      candidate.split("").each_with_index do |letter, index|
-        diffs += 1 if (word[index] != letter)
+        adjacent_words << new_word if candidates.include?(new_word)
       end
-
-      adjacent_words << candidate if (diffs == 1)
     end
 
     adjacent_words
@@ -33,6 +36,7 @@ class WordChainer
   def build_chain(source, target)
     return nil if source.length != target.length
 
+    # winnow the dictionary to possibly useful words
     @candidates = @dictionary.select { |word| word.length == source.length }
     @candidates = Set.new(@candidates) - [source]
 
@@ -55,7 +59,8 @@ class WordChainer
       @parent_words.merge!(new_parent_words)
 
       # filter candidates of new_words; we never need to return to a
-      # word that we've found previously.
+      # word that we've found previously. In fact, we might enter a
+      # loop if we revisted an old word!
       @candidates -= new_words
     end
 
