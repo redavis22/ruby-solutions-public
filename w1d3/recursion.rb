@@ -5,6 +5,7 @@ def sum_iter(nums)
 end
 
 def sum_rec(nums)
+  return 0 if nums.empty?
   nums[0] + sum_rec(nums[1..-1])
 end
 
@@ -28,8 +29,14 @@ class Array
     # have used `inject`...
     new_array = []
     self.each do |el|
-      new_array << (el.is_a?(Array)) ? (el.deep_dup) : el
+      if el.is_a?(Array)
+        new_array << el.deep_dup
+      else
+        new_array << el
+      end
     end
+
+    new_array
   end
 end
 
@@ -59,9 +66,9 @@ def fibs_rec(n)
   else
     fibs = fibs_rec(n - 1)
     fibs << fibs[-2] + fibs[-1]
-  end
 
-  fibs
+    fibs
+  end
 end
 
 def bsearch(nums, target)
