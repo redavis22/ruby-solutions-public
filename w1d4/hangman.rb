@@ -23,6 +23,7 @@ class Hangman
       @tries += 1
     end
 
+    puts "Word was: #{@referee.require_secret}"
     puts "Guesser loses!"
 
     nil
@@ -81,6 +82,11 @@ class HumanPlayer
     # didn't check for bogus input here; got lazy :-)
     positions = gets.chomp.split(",").map(&:to_i)
   end
+
+  def require_secret
+    puts "What word were you thinking of?"
+    gets.chomp
+  end
 end
 
 class ComputerPlayer
@@ -135,6 +141,10 @@ class ComputerPlayer
         end
       end
     end
+  end
+
+  def require_secret
+    @secret_word
   end
 
   private
