@@ -18,14 +18,13 @@ class Mastermind
     code
   end
 
-  def initialize
+  def play
     @secret_code = Mastermind.generate_secret_code
     @turn = 0
 
+    # for debugging purposes
     p @secret_code
-  end
 
-  def play
     while true
       if @turn == MAX_TURNS
         puts "You're the worst!"
@@ -43,6 +42,8 @@ class Mastermind
         @turn += 1
       end
     end
+
+    nil
   end
 
   private
