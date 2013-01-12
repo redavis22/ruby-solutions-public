@@ -69,7 +69,6 @@ describe TreeNode do
         [tree_node,
           tree_node.left_child,
           tree_node.left_child.left_child,
-          tree_node.left_child.right_child,
           tree_node.right_child].each do |node|
           node.should_receive(:value).ordered
         end
@@ -81,9 +80,7 @@ describe TreeNode do
     describe "#bfs" do
       it "visits nodes in right order" do
         [tree_node,
-          tree_node.left_child,
           tree_node.right_child,
-          tree_node.left_child.left_child,
           tree_node.left_child.right_child].each do |node|
           node.should_receive(:value).ordered
         end
