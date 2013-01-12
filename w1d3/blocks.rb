@@ -5,7 +5,7 @@ class Array
   def my_each(&blk)
     i = 0
     while i < self.count
-      blk.call(i)
+      blk.call(self[i])
       i += 1
     end
 
@@ -26,6 +26,8 @@ class Array
     self.my_each do |el|
       new_vals << el if blk.call(el)
     end
+
+    new_vals
   end
 
   def my_inject(&blk)
@@ -46,6 +48,7 @@ class Array
         # last element has no next element
         next if (index + 1) == self.count
 
+        # call block to decide whether `self[index] > self[index + 1]`
         if yield(self[index], self[index + 1]) == 1
           self[index], self[index + 1] = self[index + 1], self[index]
           sorted = false
