@@ -125,9 +125,10 @@ class ComputerPlayer
     most_frequent_letters = freq_table.sort_by { |letter, count| count }
     letter, count = most_frequent_letters.pop
 
-    # we'll never repeat a guess because we
-    #   (1) remove all words with a guessed letter if there are no hits, and
-    #   (2) we only look at unfilled positions when calculating frequency
+    # we'll never repeat a guess because we only look at unfilled
+    # positions to calculate frequency, and we remove a word from the
+    # candidates if it has a guessed letter an unfilled position in
+    # the board.
     letter
   end
 
