@@ -132,14 +132,19 @@ class ComputerPlayer
   end
 
   def handle_response(guess, response_indices)
-    if response_indices.empty?
-      @candidate_words.delete_if { |word| word.include?(guess) }
-    else
-      @candidate_words.delete_if do |word|
-        response_indices.any? do |index|
-          word[index] != guess
+    @candidate_words.delete_if do |word|
+      should_delete = false
+      word.split("").each_with_index do |letter, index|
+        if (letter == guess) && (not response_indices.include?(index))
+          should_delete = true
+          break
+        elsif (letter != guess) && (response_indices.include?(index))
+          should_delete = true
+          break
         end
       end
+
+      should_delete
     end
   end
 
