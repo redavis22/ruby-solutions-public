@@ -76,10 +76,10 @@ def bsearch(nums, target)
   return -1 if nums.count == 0
 
   probe_index = nums.length / 2
-  case nums[probe_index] <=> target
+  case target <=> nums[probe_index]
   when -1
     # search in left
-    bsearch(nums[0..(probe_index - 1)], target)
+    bsearch(nums[0...probe_index], target)
   when 0
     probe_index # found it!
   when 1
