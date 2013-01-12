@@ -98,11 +98,29 @@ def bsearch(nums, target)
 end
 
 def make_change(target, coins = [25, 10, 5, 1])
-  best_change = nil
-  coins.each do |coin|
-    this_change = [coin] + make_change(target - coin, coins)
+  return [] if target == 0
 
-    if (best_change.nil? || (best_change.count < this_change.count))
+  best_change = nil
+  coins.sort.reverse.each_with_index do |coin, index|
+    # can't use this coin, it's too big
+    next if coin > target
+
+    # use this coin
+    remainder = target - coin
+
+    # find the best way to make change with the remainder (recursive
+    # call). NB: Why `coins[index..-1]`? Because we want to avoid
+    # double counting; imagine two ways to make change for 6 cents:
+    #   (1) first use a nickle, then a penny
+    #   (2) first use a penny, then a nickle
+    # To avoid double counting, we should require that we use *larger
+    # coins first*. This is what `coins[index..-1]` enforces; if we
+    # use a smaller coin, we can never use larger coins later.
+    best_remainder = make_change(remainder, coins[index..-1])
+
+    this_change = [coin] + best_remainder
+
+    if (best_change.nil? || (this_change.count < best_change.count))
       best_change = this_change
     end
   end
