@@ -107,27 +107,9 @@ class TicTacToe
     @board.dup
   end
 
-  def place_mark(pos, mark)
-    if @board.empty?(pos)
-      @board.place_mark(pos, mark)
-    else
-      raise IllegalMoveError.new("Space already taken")
-    end
-
-    self
-  end
-
   def show
     # not very pretty printing!
     @board.rows.each { |row| p row }
-  end
-
-  def play_turn
-    current_player = @players[@turn]
-    current_player.move(self, @turn)
-
-    # swap next who's turn it will be next
-    @turn = ((@turn == :x) ? :o : :x)
   end
 
   def run
@@ -142,6 +124,28 @@ class TicTacToe
       puts "No one wins!"
     end
   end
+
+  private
+  def play_turn
+    while true
+      current_player = @players[@turn]
+      pos = current_player.move(self, @turn)
+
+      break if place_mark(pos, @turn)
+    end
+
+    # swap next who's turn it will be next
+    @turn = ((@turn == :x) ? :o : :x)
+  end
+
+  def place_mark(pos, mark)
+    if @board.empty?(pos)
+      @board.place_mark(pos, mark)
+      true
+    else
+      false
+    end
+  end
 end
 
 class HumanPlayer
@@ -152,18 +156,6 @@ class HumanPlayer
   end
 
   def move(game, mark)
-    while true
-      x, y = get_coords(game)
-      break if set_move(game, mark, [x, y])
-    end
-  end
-
-  private
-  def self.valid_coord?(x, y)
-    [x, y].all? { |coord| (0..2).include?(coord) }
-  end
-
-  def get_coords(game)
     game.show
     while true
       puts "#{@name}: please select your space"
@@ -176,14 +168,9 @@ class HumanPlayer
     end
   end
 
-  def set_move(game, mark, pos)
-    begin
-      game.place_mark(pos, mark)
-      true
-    rescue TicTacToe::IllegalMoveError
-      puts "Illegal move!"
-      false
-    end
+  private
+  def self.valid_coord?(x, y)
+    [x, y].all? { |coord| (0..2).include?(coord) }
   end
 end
 
@@ -195,14 +182,7 @@ class ComputerPlayer
   end
 
   def move(game, mark)
-    m = nil
-    if winner_move(game, mark).nil?
-      m = random_move(game, mark)
-    else
-      m = winner_move(game, mark)
-    end
-
-    game.place_mark(m, mark)
+    winner_move(game, mark) || random_move(game, mark)
   end
 
   private
