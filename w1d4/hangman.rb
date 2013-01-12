@@ -12,6 +12,7 @@ class Hangman
   def play
     @tries = 0
     secret_length = @referee.pick_secret_word
+    @guesser.register_secret_length(secret_length)
     @current_board = [nil] * secret_length
 
     while @tries < MAX_TRIES
@@ -34,10 +35,18 @@ class Hangman
 end
 
 class HumanPlayer
+  def register_secret_length(length)
+    puts "Secret is #{length} letters long"
+  end
+
   def guess(board)
     p board
     puts "Input guess:"
     gets.chomp
+  end
+
+  def handle_response(guess, response)
+    # don't really need to do anything here...
   end
 
   def pick_secret_word
@@ -59,10 +68,6 @@ class HumanPlayer
 
     # didn't check for bogus input here; got lazy :-)
     positions = gets.chomp.split(",").map(&:to_i)
-  end
-
-  def handle_response(guess, response)
-    # don't really need to do anything here...
   end
 end
 
@@ -93,7 +98,13 @@ class ComputerPlayer
     response
   end
 
+  def register_secret_length(length)
+    @candidate_words.select! { |word| word.length == length }
+  end
+
   def guess(board)
+    # I left this here so you can see it narrow things down.
+    p @candidate_words
     freq_table = freq_table(board)
     top_letter, top_count = freq_table.sort_by { |letter, count| count }.last
 
