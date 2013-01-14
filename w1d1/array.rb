@@ -9,7 +9,7 @@ end
 
 def two_sum(array)
   array.each do |num|
-    if num > 0
+    if num != 0
       return true if array.include?(-1 * num)
     else
       # -1 * 0 == 0; array includes at least one zero (this num here),
