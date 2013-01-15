@@ -3,6 +3,8 @@ def factors(num)
 end
 
 def fibs_rec(count)
+  # If you didn't get fibs_rec right, step through my version in the
+  # debugger. You need to know how this works *cold*.
   case count
   when 1
     [0]
@@ -21,6 +23,9 @@ class Array
   end
 
   def bubble_sort!(&blk)
+    # See how I create a Proc if no block was given; this eliminates
+    # having to later have two branches of logic, one for a block and
+    # one for no block.
     blk = Proc.new { |x, y| x <=> y } unless blk
 
     sorted = false
@@ -31,6 +36,7 @@ class Array
         next if i == count - 1
 
         if blk.call(self[i], self[i + 1]) == 1
+          # Parallel assignment; use it when swapping.
           self[i], self[i + 1] = self[i + 1], self[i]
           sorted = false
         end
