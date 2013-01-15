@@ -76,7 +76,7 @@ class Board
   end
 
   def winner
-    (rows + cols + diagonals).any? do |triple|
+    (rows + cols + diagonals).each do |triple|
       if [[:x] * 3, [:o] * 3].include?(triple)
         mark = triple[0]
         return mark
