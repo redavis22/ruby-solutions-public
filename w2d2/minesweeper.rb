@@ -57,13 +57,11 @@ class Tile
     # don't explore a location user thinks is bombed.
     return self if flagged?
 
-    raise "Must not explore bombed position." if bombed?
-
     # don't revisit previously explored tiles
     return self if explored?
 
     @explored = true
-    if adjacent_bomb_count == 0
+    if (not bombed?) && adjacent_bomb_count == 0
       neighbors.each { |adj_tile| adj_tile.explore }
     end
 
@@ -82,7 +80,8 @@ class Tile
     if flagged?
       "F"
     elsif bombed? && reveal
-      "B"
+      # display losing bomb as an X
+      explored? ? "X" : "B"
     elsif explored? || reveal
       adjacent_bomb_count == 0 ? "_" : adjacent_bomb_count.to_s
     else
@@ -112,6 +111,12 @@ class Board
     @grid.map do |row|
       row.map { |tile| tile.render(reveal) }.join("")
     end.join("\n")
+  end
+
+  def lost?
+    @grid.any? do |row|
+      row.any? { |tile| tile.bombed? && tile.explored? }
+    end
   end
 
   def won?
@@ -158,19 +163,21 @@ class MinesweeperGame
   end
 
   def play
-    until @board.won?
+    while true
       puts @board.render
-      action, pos = get_move
 
-      unless perform_move(action, pos)
-        # game ended
+      action, pos = get_move
+      perform_move(action, pos)
+
+      if @board.won?
+        puts "You win!"
+        return
+      elsif @board.lost?
         puts "**Bomb hit!**"
         puts @board.render(true)
         return
       end
     end
-
-    puts "You win!"
   end
 
   private
@@ -180,20 +187,13 @@ class MinesweeperGame
     [action_type, [row_s.to_i, col_s.to_i]]
   end
 
-  # returns false if game is over
   def perform_move(action_type, pos)
     tile = @board.tile_at(pos)
     case action_type
     when "f"
       tile.toggle_flag
     when "e"
-      if tile.bombed?
-        return false
-      else
-        tile.explore
-      end
+      tile.explore
     end
-
-    true
   end
 end
