@@ -76,17 +76,25 @@ class Tile
       :explored => explored }.inspect
   end
 
-  def render(reveal = false)
+  def render
     if flagged?
       "F"
-    elsif bombed? && reveal
-      # display losing bomb as an X
-      explored? ? "X" : "B"
-    elsif explored? || reveal
+    elsif explored?
       adjacent_bomb_count == 0 ? "_" : adjacent_bomb_count.to_s
     else
-      # unexplored, unflagged
       "*"
+    end
+  end
+
+  def reveal
+    if flagged
+      # mark true and false flags
+      bombed? ? "F" : "f"
+    elsif bombed?
+      # display a hit bomb as an X
+      explored? ? "X" : "B"
+    else
+      adjacent_bomb_count == 0 ? "_" : adjacent_bomb_count.to_s
     end
   end
 end
@@ -107,10 +115,15 @@ class Board
   end
 
   def render(reveal = false)
-    rendered_rows = []
     @grid.map do |row|
-      row.map { |tile| tile.render(reveal) }.join("")
+      row.map do |tile|
+        reveal ? tile.reveal : tile.render
+      end.join("")
     end.join("\n")
+  end
+
+  def reveal
+    render(true)
   end
 
   def lost?
@@ -174,7 +187,7 @@ class MinesweeperGame
         return
       elsif @board.lost?
         puts "**Bomb hit!**"
-        puts @board.render(true)
+        puts @board.reveal
         return
       end
     end
