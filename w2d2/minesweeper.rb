@@ -1,3 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+
 class Tile
   DELTAS = [
     [-1, -1],
@@ -207,6 +211,30 @@ class MinesweeperGame
       tile.toggle_flag
     when "e"
       tile.explore
+    when "s"
+      # won't quit on save, just hit ctr-c to do that.
+      save
     end
+  end
+
+  def save
+    puts "Enter filename to save at:"
+    filename = gets.chomp
+
+    File.open(filename, "w") do |f|
+      YAML.dump(self, f)
+    end
+  end
+end
+
+if $PROGRAM_NAME == __FILE__
+  # running as script
+
+  case ARGV.count
+  when 0
+    MinesweeperGame.new(:small).play
+  when 1
+    # resume game, using first argument
+    YAML.load_file(ARGV.shift).play
   end
 end
