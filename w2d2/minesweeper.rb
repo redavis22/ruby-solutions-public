@@ -10,9 +10,14 @@ class Tile
     [1, 1]
   ]
 
-  attr_reader :pos
+  attr_reader :pos, :explored
+  attr_accessor :bombed, :flagged
 
-  attr_accessor :bombed, :flagged, :explored
+  # You can't name an instance variable with a '?', but it's common to
+  # give boolean accessors names ending with a '?'. We can use
+  # `alias_method` as a directive to generate a "wrapper" method with
+  # a new name:
+  #     http://www.ruby-doc.org/core-1.9.3/Module.html#method-i-alias_method
   alias_method :bombed?, :bombed
   alias_method :flagged?, :flagged
   alias_method :explored?, :explored
@@ -32,11 +37,49 @@ class Tile
     adjacent_coords.map { |pos| @board.tile_at(pos) }
   end
 
+  def adjacent_bomb_count
+    neighbors.map { |tile| tile.bombed? ? 1 : 0 }.inject(0, :+)
+  end
+
+  def flagged_correctly?
+    bombed? && flagged?
+  end
+
+  def explore
+    # don't explore a location user thinks is bombed.
+    return self if flagged?
+
+    raise "Must not explore bombed position." if bombed?
+
+    # don't revisit previously explored tiles
+    return self if explored?
+
+    @explored = true
+    if adjacent_bomb_count == 0
+      neighbors.each { |adj_tile| adj_tile.explore }
+    end
+
+    self
+  end
+
   def inspect
     { :pos => pos,
       :bombed => bombed,
       :flagged => flagged,
       :explored => explored }.inspect
+  end
+
+  def render(debug = false)
+    if flagged?
+      "F"
+    elsif bombed? && debug
+      "B"
+    elsif explored? || debug
+      adjacent_bomb_count == 0 ? "_" : adjacent_bomb_count.to_s
+    else
+      # unexplored, unflagged
+      "*"
+    end
   end
 end
 
