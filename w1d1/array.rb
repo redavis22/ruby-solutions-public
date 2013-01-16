@@ -55,6 +55,8 @@ class TowersOfHanoi
 
     # just ignore moves from empty piles
     return unless from_stack.count > 0
+    # ignore a move placing a large disk on top of a small one
+    return if to_stack.last < from_stack.last
 
     to_stack.push(from_stack.pop)
 
