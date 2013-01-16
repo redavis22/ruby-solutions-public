@@ -135,3 +135,32 @@ class Board
     end
   end
 end
+
+class MinesweeperGame
+  LAYOUTS = {
+    :small => { :grid_size => 9, :num_bombs => 10 },
+    :medium => { :grid_size => 16, :num_bombs => 40 }
+  }
+
+  # for debugging
+  attr_reader :board
+
+  def initialize(size)
+    layout = LAYOUTS[size]
+    @board = Board.new(layout[:grid_size], layout[:num_bombs])
+  end
+
+  def explore_at(pos)
+    @board.tile_at(pos).explore
+
+    self
+  end
+
+  def flag_at(pos)
+    @board.tile_at(pos).flagged = true
+  end
+
+  def display(debug = false)
+    puts @board.render(debug)
+  end
+end
