@@ -71,18 +71,19 @@ class Tile
   end
 
   def inspect
+    # don't show me the whole board when inspecting a Tile
     { :pos => pos,
       :bombed => bombed,
       :flagged => flagged,
       :explored => explored }.inspect
   end
 
-  def render(debug = false)
+  def render(reveal = false)
     if flagged?
       "F"
-    elsif bombed? && debug
+    elsif bombed? && reveal
       "B"
-    elsif explored? || debug
+    elsif explored? || reveal
       adjacent_bomb_count == 0 ? "_" : adjacent_bomb_count.to_s
     else
       # unexplored, unflagged
@@ -92,12 +93,12 @@ class Tile
 end
 
 class Board
-  attr_reader :grid_size
+  attr_reader :grid_size, :num_bombs
 
   def initialize(grid_size, num_bombs)
     @grid_size, @num_bombs = grid_size, num_bombs
 
-    generate_board
+    @grid = generate_board
     plant_bombs
   end
 
@@ -106,10 +107,10 @@ class Board
     @grid[row][col]
   end
 
-  def render(debug = false)
+  def render(reveal = false)
     rendered_rows = []
     @grid.map do |row|
-      row.map { |tile| tile.render(debug) }.join("")
+      row.map { |tile| tile.render(reveal) }.join("")
     end.join("\n")
   end
 
@@ -124,7 +125,7 @@ class Board
 
   private
   def generate_board
-    @grid = Array.new(@grid_size) do |row|
+    Array.new(@grid_size) do |row|
       Array.new(@grid_size) { |col| Tile.new(self, [row, col]) }
     end
   end
@@ -147,7 +148,8 @@ end
 class MinesweeperGame
   LAYOUTS = {
     :small => { :grid_size => 9, :num_bombs => 10 },
-    :medium => { :grid_size => 16, :num_bombs => 40 }
+    :medium => { :grid_size => 16, :num_bombs => 40 },
+    :large => { :grid_size => 32, :num_bombs => 160 } # whoa.
   }
 
   def initialize(size)
@@ -162,7 +164,8 @@ class MinesweeperGame
 
       unless perform_move(action, pos)
         # game ended
-        puts "Bomb hit!"
+        puts "**Bomb hit!**"
+        puts @board.render(true)
         return
       end
     end
