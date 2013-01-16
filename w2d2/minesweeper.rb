@@ -10,8 +10,8 @@ class Tile
     [1, 1]
   ]
 
-  attr_reader :pos, :explored
-  attr_accessor :bombed, :flagged
+  attr_reader :pos, :explored, :flagged
+  attr_accessor :bombed
 
   # You can't name an instance variable with a '?', but it's common to
   # give boolean accessors names ending with a '?'. We can use
@@ -31,6 +31,7 @@ class Tile
     adjacent_coords = DELTAS.map do |(dx, dy)|
       [pos[0] + dx, pos[1] + dy]
     end.select do |(row, col)|
+      # throw out out of bound coordinates
       [row, col].all? { |coord| (0...@board.grid_size).include?(coord) }
     end
 
@@ -39,6 +40,13 @@ class Tile
 
   def adjacent_bomb_count
     neighbors.map { |tile| tile.bombed? ? 1 : 0 }.inject(0, :+)
+  end
+
+  def toggle_flag
+    # ignore flagging of explored squares
+    return if @explored
+
+    @flagged = !@flagged
   end
 
   def flagged_correctly?
@@ -108,7 +116,7 @@ class Board
   def won?
     correct_flags = 0
     @grid.each do |row|
-      row.each { |tile| correct_flags += 1 if tile.correctly_flagged? }
+      row.each { |tile| correct_flags += 1 if tile.flagged_correctly? }
     end
 
     correct_flags == @num_bombs
@@ -142,25 +150,47 @@ class MinesweeperGame
     :medium => { :grid_size => 16, :num_bombs => 40 }
   }
 
-  # for debugging
-  attr_reader :board
-
   def initialize(size)
     layout = LAYOUTS[size]
     @board = Board.new(layout[:grid_size], layout[:num_bombs])
   end
 
-  def explore_at(pos)
-    @board.tile_at(pos).explore
+  def play
+    until @board.won?
+      puts @board.render
+      action, pos = get_move
 
-    self
+      unless perform_move(action, pos)
+        # game ended
+        puts "Bomb hit!"
+        return
+      end
+    end
+
+    puts "You win!"
   end
 
-  def flag_at(pos)
-    @board.tile_at(pos).flagged = true
+  private
+  def get_move
+    action_type, row_s, col_s = gets.chomp.split(",")
+
+    [action_type, [row_s.to_i, col_s.to_i]]
   end
 
-  def display(debug = false)
-    puts @board.render(debug)
+  # returns false if game is over
+  def perform_move(action_type, pos)
+    tile = @board.tile_at(pos)
+    case action_type
+    when "f"
+      tile.toggle_flag
+    when "e"
+      if tile.bombed?
+        return false
+      else
+        tile.explore
+      end
+    end
+
+    true
   end
 end
