@@ -31,6 +31,13 @@ class Tile
 
     adjacent_coords.map { |pos| @board.tile_at(pos) }
   end
+
+  def inspect
+    { :pos => pos,
+      :bombed => bombed,
+      :flagged => flagged,
+      :explored => explored }.inspect
+  end
 end
 
 class Board
