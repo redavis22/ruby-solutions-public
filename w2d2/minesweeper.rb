@@ -98,6 +98,22 @@ class Board
     @grid[row][col]
   end
 
+  def render(debug = false)
+    rendered_rows = []
+    @grid.map do |row|
+      row.map { |tile| tile.render(debug) }.join("")
+    end.join("\n")
+  end
+
+  def won?
+    correct_flags = 0
+    @grid.each do |row|
+      row.each { |tile| correct_flags += 1 if tile.correctly_flagged? }
+    end
+
+    correct_flags == @num_bombs
+  end
+
   private
   def generate_board
     @grid = Array.new(@grid_size) do |row|
