@@ -84,6 +84,10 @@ describe "#two_sum" do
     [5, -1, -5, 1].two_sum.should == [[0, 2], [1, 3]]
   end
 
+  it "finds pairs with same element" do
+    [5, -5, -5].two_sum.should == [[0, 1], [0, 2]]
+  end
+
   it "returns [] when no pair is found" do
     [5, 5, 3, 1].two_sum.should == []
   end
