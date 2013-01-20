@@ -12,6 +12,7 @@ class Piece
   end
 
   def moves
+    # subclass implements this
     raise NotImplementedError
   end
 end
@@ -41,7 +42,9 @@ class SlidingPiece < Piece
     moves
   end
 
+  protected
   def move_dirs
+    # subclass implements this
     raise NotImplementedError
   end
 
@@ -68,5 +71,32 @@ class SlidingPiece < Piece
     end
 
     moves
+  end
+end
+
+class SteppingPiece < Piece
+  def moves
+    moves = []
+
+    move_diffs.each do |(dx, dy)|
+      cur_x, cur_y = pos
+      pos = [cur_x + dx, cur_y + dy]
+
+      next unless @board.valid_pos?(pos)
+
+      if @board.empty?(pos)
+        move << pos
+      elsif @board.piece_at(pos).color != self.color
+        move << pos
+      end
+    end
+
+    moves
+  end
+
+  protected
+  def move_diffs
+    # subclass implements this
+    raise NotImplementedError
   end
 end
