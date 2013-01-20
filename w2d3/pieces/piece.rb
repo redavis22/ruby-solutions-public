@@ -2,6 +2,9 @@ class Piece
   attr_reader :color
 
   def initialize(color, board, pos)
+    raise "invalid color" unless [:white, :black].include?(color)
+    raise "invalid pos" unless @board.valid_pos?(pos)
+
     @color, @board, @pos = color, board, pos
 
     board.place_piece(self, pos)
