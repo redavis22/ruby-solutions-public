@@ -16,6 +16,14 @@ class Board
     @rows[i][j]
   end
 
+  def place_piece(piece, pos)
+    raise "invalid pos" unless valid_pos?(pos)
+    raise "position not empty" unless empty?(pos)
+
+    i, j = pos
+    @rows[i][j] = piece
+  end
+
   def valid_pos?(pos)
     pos.all? do |coord|
       (0...8).include?(coord)
