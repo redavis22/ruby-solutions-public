@@ -1,4 +1,4 @@
-class KnightPiece
+class Knight < Piece
   protected
   def move_diffs
     [ [-3, -2],
