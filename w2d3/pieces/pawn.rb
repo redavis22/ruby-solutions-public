@@ -2,26 +2,31 @@
 
 require_relative 'piece'
 
-class Pawn < SteppingPiece
+class Pawn < Piece
   def symbols
     ['♙', '♟']
   end
 
-  protected
-  def move_diffs
-    move_diffs = []
+  def moves
+    moves = []
 
     # NB: not in love with dependency on board orientation. Changes to
     # Board's internal representation would require a change here...
     forward_dir = (color == :white) ? -1 : 1
-    move_diffs << [forward_dir, 0]
-    # can move two spaces the first time
-    move_diffs << [forward_dir * 2, 0] if at_start_row?
 
-    # handle side attacks
-    [[forward_dir, -1], [forward_dir, 1]].each do |(dx, dy)|
-      new_pos = [pos[0] + dx, pos[1] + dy]
+    i, j = pos
+    one_step = [i + forward_dir, j]
+    if @board.valid_pos?(one_step) && @board.empty?(one_step)
+      moves << one_step
 
+      two_step = [i + 2 * forward_dir, j]
+      if at_start_row? && @board.empty?(two_step)
+        moves << two_step
+      end
+    end
+
+    side_attacks = [[i + forward_dir, j - 1], [i + forward_dir, j + 1]]
+    side_attacks.each do |new_pos|
       next unless @board.valid_pos?(new_pos)
 
       threatened_piece = @board.piece_at(new_pos)
@@ -30,9 +35,10 @@ class Pawn < SteppingPiece
       end
     end
 
-    move_diffs
+    moves
   end
 
+  private
   def at_start_row?
     pos[0] == ((color == :white) ? 6 : 1)
   end
