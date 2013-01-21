@@ -1,9 +1,9 @@
 require_relative 'pieces'
 
 class Board
-  def initialize
+  def initialize(fill_board = true)
     @pieces = []
-    make_starting_grid
+    make_starting_grid(fill_board)
   end
 
   def piece_at(pos)
@@ -73,13 +73,15 @@ class Board
   end
 
   protected
-  def make_starting_grid
+  def make_starting_grid(fill_board)
     @rows = Array.new(8) { Array.new(8) }
 
-    fill_back_row(0, :black)
-    fill_pawns_row(1, :black)
-    fill_pawns_row(6, :white)
-    fill_back_row(7, :white)
+    if fill_board
+      fill_back_row(0, :black)
+      fill_pawns_row(1, :black)
+      fill_pawns_row(6, :white)
+      fill_back_row(7, :white)
+    end
   end
 
   def fill_back_row(i, color)
