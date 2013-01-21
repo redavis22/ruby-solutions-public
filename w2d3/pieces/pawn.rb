@@ -13,7 +13,7 @@ class Pawn < SteppingPiece
 
     # NB: not in love with dependency on board orientation. Changes to
     # Board's internal representation would require a change here...
-    forward_dir = (color == :white) ? -1 : 0
+    forward_dir = (color == :white) ? -1 : 1
     move_diffs << [forward_dir, 0]
     # can move two spaces the first time
     move_diffs << [forward_dir * 2, 0] if at_start_row?
