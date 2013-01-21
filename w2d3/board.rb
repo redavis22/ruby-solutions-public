@@ -52,6 +52,18 @@ class Board
     piece_at(pos).nil?
   end
 
+  def in_check?(color)
+    king = find_king(color)
+
+    @pieces.each do |piece|
+      next if piece.color == color
+
+      return true if piece.moves.include?(king.pos)
+    end
+
+    false
+  end
+
   def render
     @rows.map do |row|
       row.map do |piece|
@@ -85,5 +97,13 @@ class Board
     8.times do |j|
       Pawn.new(color, self, [i, j])
     end
+  end
+
+  def find_king(color)
+    @pieces.each do |piece|
+      return piece if piece.is_a?(King) && piece.color == color
+    end
+
+    raise "king not found?"
   end
 end
