@@ -22,14 +22,14 @@ class Board
     @rows[i][j] = piece
   end
 
-  def move_piece(from_pos, to_pos)
+  def move_piece(turn_color, from_pos, to_pos)
     test_board = self.dup
-    moved_piece = test_board.perform_move(from_pos, to_pos)
+    test_board.perform_move(turn_color, from_pos, to_pos)
 
-    if test_board.in_check?(moved_piece.color)
+    if test_board.in_check?(turn_color)
       raise "can't move into check"
     else
-      perform_move(from_pos, to_pos)
+      perform_move(turn_color, from_pos, to_pos)
     end
   end
 
@@ -110,11 +110,12 @@ class Board
     raise "king not found?"
   end
 
-  def perform_move(from_pos, to_pos)
+  def perform_move(turn_color, from_pos, to_pos)
     raise "from position is empty" if empty?(from_pos)
 
     piece = piece_at(from_pos)
 
+    raise "move your own piece" unless piece.color == turn_color
     raise "piece cannot move to pos" unless piece.moves.include?(to_pos)
 
     to_i, to_j = to_pos
