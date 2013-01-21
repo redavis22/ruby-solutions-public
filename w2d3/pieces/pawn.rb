@@ -17,7 +17,7 @@ class Pawn < SteppingPiece
     move_diffs << [forward_dir, 0]
 
     # handle side attacks
-    [forward_dir, -1, forward_dir, 1].each do |pos|
+    [[forward_dir, -1], [forward_dir, 1]].each do |pos|
       next unless @board.valid_pos?(pos)
 
       threatened_piece = @board.piece_at(pos)
@@ -26,6 +26,6 @@ class Pawn < SteppingPiece
       end
     end
 
-    moves
+    move_diffs
   end
 end
