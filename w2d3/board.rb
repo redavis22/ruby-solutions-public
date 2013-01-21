@@ -20,6 +20,23 @@ class Board
     @rows[i][j] = piece
   end
 
+  def move_piece(from_pos, to_pos)
+    raise "from position is empty" if empty?(from_pos)
+
+    piece = piece_at(from_pos)
+
+    raise "piece cannot move to pos" unless piece.moves.include?(to_pos)
+
+    to_i, to_j = to_pos
+    from_i, from_j = from_pos
+    @rows[to_i][to_j] = piece
+    @rows[from_i][from_j] = nil
+
+    # TODO: might be a good idea to mark a captured piece as such...
+
+    piece.pos = to_pos
+  end
+
   def valid_pos?(pos)
     pos.all? do |coord|
       (0...8).include?(coord)
