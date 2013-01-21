@@ -1,5 +1,6 @@
 class Piece
   attr_reader :color
+  attr_accessor :pos
 
   def initialize(color, board, pos)
     raise "invalid color" unless [:white, :black].include?(color)
@@ -8,10 +9,6 @@ class Piece
     @color, @board, @pos = color, board, pos
 
     board.place_piece(self, pos)
-  end
-
-  def pos
-    @pos.dup
   end
 
   def moves
