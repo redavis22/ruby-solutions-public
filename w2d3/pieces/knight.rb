@@ -2,7 +2,7 @@
 
 require_relative 'piece'
 
-class Knight < Piece
+class Knight < SteppingPiece
   def symbols
     ['♘', '♞']
   end
