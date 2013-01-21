@@ -97,9 +97,9 @@ class SteppingPiece < Piece
       next unless @board.valid_pos?(pos)
 
       if @board.empty?(pos)
-        move << pos
+        moves << pos
       elsif @board.piece_at(pos).color != self.color
-        move << pos
+        moves << pos
       end
     end
 
