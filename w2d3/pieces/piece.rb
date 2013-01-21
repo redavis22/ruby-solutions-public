@@ -18,6 +18,15 @@ class Piece
     # subclass implements this
     raise NotImplementedError
   end
+
+  def render
+    symbols[(color == :white) ? 0 : 1]
+  end
+
+  def symbols
+    # subclass implements this with unicode chess char
+    raise NotImplementedError
+  end
 end
 
 class SlidingPiece < Piece

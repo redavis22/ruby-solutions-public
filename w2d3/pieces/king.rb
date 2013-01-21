@@ -1,4 +1,12 @@
+# -*- coding: utf-8 -*-
+
+require_relative 'piece'
+
 class King < SteppingPiece
+  def symbols
+    ['♔', '♚']
+  end
+
   protected
   def move_diffs
     [ [-1, -1],

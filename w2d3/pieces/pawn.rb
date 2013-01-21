@@ -1,4 +1,12 @@
+# -*- coding: utf-8 -*-
+
+require_relative 'piece'
+
 class Pawn < SteppingPiece
+  def symbols
+    ['♙', '♟']
+  end
+
   protected
   def move_diffs
     move_diffs = []
