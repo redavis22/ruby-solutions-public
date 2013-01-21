@@ -23,23 +23,14 @@ class Board
   end
 
   def move_piece(from_pos, to_pos)
-    raise "from position is empty" if empty?(from_pos)
+    test_board = self.dup
+    moved_piece = test_board.perform_move(from_pos, to_pos)
 
-    piece = piece_at(from_pos)
-
-    raise "piece cannot move to pos" unless piece.moves.include?(to_pos)
-
-    to_i, to_j = to_pos
-    from_i, from_j = from_pos
-
-    captured_piece = @rows[to_i][to_j]
-    @rows[to_i][to_j] = piece
-    @rows[from_i][from_j] = nil
-
-    # TODO: might be a good idea to mark a captured piece as such...
-    @pieces.delete(captured_piece) if captured_piece
-
-    piece.pos = to_pos
+    if test_board.in_check?(moved_piece.color)
+      raise "can't move into check"
+    else
+      perform_move(from_pos, to_pos)
+    end
   end
 
   def valid_pos?(pos)
@@ -117,5 +108,28 @@ class Board
     end
 
     raise "king not found?"
+  end
+
+  def perform_move(from_pos, to_pos)
+    raise "from position is empty" if empty?(from_pos)
+
+    piece = piece_at(from_pos)
+
+    raise "piece cannot move to pos" unless piece.moves.include?(to_pos)
+
+    to_i, to_j = to_pos
+    from_i, from_j = from_pos
+
+    captured_piece = @rows[to_i][to_j]
+    @rows[to_i][to_j] = piece
+    @rows[from_i][from_j] = nil
+
+    # TODO: might be a good idea to mark a captured piece as such...
+    @pieces.delete(captured_piece) if captured_piece
+
+    piece.pos = to_pos
+
+    # return moved piece
+    piece
   end
 end
