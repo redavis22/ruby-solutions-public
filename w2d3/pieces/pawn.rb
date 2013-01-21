@@ -19,12 +19,14 @@ class Pawn < SteppingPiece
     move_diffs << [forward_dir * 2, 0] if at_start_row?
 
     # handle side attacks
-    [[forward_dir, -1], [forward_dir, 1]].each do |pos|
-      next unless @board.valid_pos?(pos)
+    [[forward_dir, -1], [forward_dir, 1]].each do |(dx, dy)|
+      new_pos = [pos[0] + dx, pos[1] + dy]
 
-      threatened_piece = @board.piece_at(pos)
+      next unless @board.valid_pos?(new_pos)
+
+      threatened_piece = @board.piece_at(new_pos)
       if threatened_piece && threatened_piece.color != self.color
-        move_diffs << pos
+        move_diffs << [dx, dy]
       end
     end
 
