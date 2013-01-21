@@ -23,10 +23,7 @@ class Board
   end
 
   def move_piece(turn_color, from_pos, to_pos)
-    test_board = self.dup
-    test_board.perform_move(turn_color, from_pos, to_pos)
-
-    if test_board.in_check?(turn_color)
+    if move_into_check?(turn_color, from_pos, to_pos)
       raise "can't move into check"
     else
       perform_move(turn_color, from_pos, to_pos)
@@ -53,6 +50,16 @@ class Board
     end
 
     false
+  end
+
+  def checkmate?(color)
+    @pieces.all? do |piece|
+      next true if piece.color != color
+
+      piece.moves.all? do |move|
+        move_into_check?(color, piece.pos, move)
+      end
+    end
   end
 
   def render
@@ -108,6 +115,17 @@ class Board
     end
 
     raise "king not found?"
+  end
+
+  def move_into_check?(turn_color, from_pos, to_pos)
+    test_board = self.dup
+    test_board.perform_move(turn_color, from_pos, to_pos)
+
+    if test_board.in_check?(turn_color)
+      true
+    else
+      false
+    end
   end
 
   def perform_move(turn_color, from_pos, to_pos)
