@@ -72,6 +72,16 @@ class Board
     end.join("\n")
   end
 
+  def dup
+    new_board = Board.new(false)
+
+    @pieces.each do |piece|
+      piece.dup(new_board)
+    end
+
+    new_board
+  end
+
   protected
   def make_starting_grid(fill_board)
     @rows = Array.new(8) { Array.new(8) }

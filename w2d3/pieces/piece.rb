@@ -20,6 +20,10 @@ class Piece
     symbols[(color == :white) ? 0 : 1]
   end
 
+  def dup(new_board)
+    self.class.new(color, new_board, pos)
+  end
+
   def symbols
     # subclass implements this with unicode chess char
     raise NotImplementedError
