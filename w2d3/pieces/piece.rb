@@ -8,7 +8,7 @@ class Piece
 
     @color, @board, @pos = color, board, pos
 
-    board.place_piece(self, pos)
+    board.add_piece(self, pos)
   end
 
   def moves

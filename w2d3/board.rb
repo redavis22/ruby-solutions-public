@@ -2,6 +2,7 @@ require_relative 'pieces'
 
 class Board
   def initialize
+    @pieces = []
     make_starting_grid
   end
 
@@ -12,11 +13,12 @@ class Board
     @rows[i][j]
   end
 
-  def place_piece(piece, pos)
+  def add_piece(piece, pos)
     raise "invalid pos" unless valid_pos?(pos)
     raise "position not empty" unless empty?(pos)
 
     i, j = pos
+    @pieces << piece
     @rows[i][j] = piece
   end
 
@@ -29,10 +31,13 @@ class Board
 
     to_i, to_j = to_pos
     from_i, from_j = from_pos
+
+    captured_piece = @rows[to_i][to_j]
     @rows[to_i][to_j] = piece
     @rows[from_i][from_j] = nil
 
     # TODO: might be a good idea to mark a captured piece as such...
+    @pieces.delete(captured_piece) if captured_piece
 
     piece.pos = to_pos
   end
