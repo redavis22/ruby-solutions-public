@@ -30,9 +30,17 @@ class Board
     piece_at(pos).nil?
   end
 
+  def render
+    @rows.map do |row|
+      row.map do |piece|
+        piece.nil? ? "." : piece.render
+      end.join
+    end.join("\n")
+  end
+
   protected
   def make_starting_grid
-    @rows = Array.new(8) { Array.new (8) }
+    @rows = Array.new(8) { Array.new(8) }
 
     fill_back_row(0, :black)
     fill_pawns_row(1, :black)
