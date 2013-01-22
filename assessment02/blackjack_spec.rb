@@ -160,6 +160,14 @@ describe Hand do
       high_hand.points.should == 15
     end
 
+    it "handles multiple aces" do
+      Hand.new([
+          Card.new(:spades, :ten),
+          Card.new(:hearts, :ace),
+          Card.new(:clubs, :ace)
+        ]).points.should == 12
+    end
+
     context "busted" do
       before do
         high_hand.hit(deck)

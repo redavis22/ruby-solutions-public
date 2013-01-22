@@ -122,13 +122,16 @@ module Blackjack
         case card.value
         when :ace
           aces += 1
+          # treat aces as 11s, we'll reduce later
+          points += 11
         else
           points += card.blackjack_value
         end
       end
 
       aces.times do
-        points += ((points + 11) <= 21) ? 11 : 1
+        # convert ace to 1 if score too high
+        points -= 10 if points > 21
       end
 
       points
