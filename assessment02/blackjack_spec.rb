@@ -218,6 +218,10 @@ describe Hand do
         hand1.beats?(hand1).should be_false
       end
 
+      it "awards win if we didn't bust, but they did" do
+        hand1.beats?(busted_hand1).should be_true
+      end
+
       it "never lets busted hand win" do
         busted_hand1.beats?(busted_hand2).should be_false
         busted_hand2.beats?(busted_hand1).should be_false
