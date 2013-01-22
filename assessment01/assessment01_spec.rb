@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative 'assessment01'
+require 'assessment01'
 
 describe "#factors" do
   # given a number, return an ordered array of its factors.

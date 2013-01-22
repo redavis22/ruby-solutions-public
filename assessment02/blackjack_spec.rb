@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative 'blackjack'
+require 'blackjack'
 
 include Blackjack
 
