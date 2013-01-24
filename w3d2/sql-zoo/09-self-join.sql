@@ -102,17 +102,16 @@ SELECT r2.stop, r2.name, r2.company, r2.num
     ON (r1.company, r1.num) = (r2.company, r2.num);
 
 -- #10. Show it is possible to get from Sighthill to Craiglockhart.
-SELECT hop1.stop1, hop1.stop2, hop2.stop3
-  FROM (SELECT route1.stop AS stop1, route2a.stop AS stop2
+SELECT hop1.stop1, hop1.company, hop1.num, hop1.stop2, hop2.company, hop2.num, hop2.stop3
+  FROM (SELECT route1.stop AS stop1, route1.company, route1.num, route2a.stop AS stop2
           FROM route route1
           JOIN route route2a
             ON (route1.company, route1.num) = (route2a.company, route2a.num)
          WHERE route1.stop = 53) as hop1
-  JOIN (SELECT route2b.stop AS stop2, route3.stop AS stop3
+  JOIN (SELECT route2b.stop AS stop2, route2b.company, route2b.num, route3.stop AS stop3
           FROM route route2b
           JOIN route route3
             ON (route2b.company, route2b.num) = (route3.company, route3.num)
          WHERE route3.stop = 213) AS hop2
-    ON hop1.stop2 = hop2.stop2
-GROUP BY hop1.stop1, hop1.stop2, hop2.stop3;
+    ON hop1.stop2 = hop2.stop2;
 -- This gives a one-transfer journey between the two. This was a hard one!
