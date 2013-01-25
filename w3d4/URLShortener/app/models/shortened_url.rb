@@ -9,9 +9,10 @@ class ShortenedUrl < ActiveRecord::Base
     :short_url,
     :submitter_id ]. each { |field| attr_accessible field }
 
-  validates :long_url, :presence => true
-  validates :short_url, :presence => true
+  validates :long_url, :presence => true, :uniqueness => true
+  validates :short_url, :presence => true, :uniqueness => true
   validates :submitter_id, :presence => true
+
 
   # My `shortened_urls` table has a column `submitter_id` which is a
   # foreign key into the `users` table. Because this doesn't follow
