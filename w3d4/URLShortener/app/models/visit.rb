@@ -1,3 +1,7 @@
 class Visit < ActiveRecord::Base
-  # attr_accessible :title, :body
+  validates :user_id, :presence => true
+  validates :shortened_url_id, :presence => true
+
+  belongs_to :visitor
+  belongs_to :shortened_url
 end
