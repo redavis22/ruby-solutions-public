@@ -14,9 +14,9 @@ class Tag < ActiveRecord::Base
   def most_popular_urls
     # this is the "real" way to do it
     urls
-      .select("shortened_urls.*, COUNT(*) AS click_count")
       .joins(:visits)
       .group("shortened_urls.id")
+      .order("COUNT(*) DESC")
 
     # this is the way you knew how to do on Thu
 #    urls.sort_by { |url| url.visits.count }.take(5)
