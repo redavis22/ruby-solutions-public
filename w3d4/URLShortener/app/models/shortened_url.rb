@@ -29,4 +29,20 @@ class ShortenedUrl < ActiveRecord::Base
   # we can find the visitors. For each `Visit`, Rails will look up the
   # associated `visitor`.
   has_many :visitors, :through => :visits
+
+  def num_clicks
+    visits.count
+  end
+
+  def num_uniques
+    # `pluck` returns an array of the column's values, instead of an
+    # array of model objects.
+    visits.count(:user_id, :distinct => true)
+  end
+
+  def num_recent_uniques
+    now = Time.now
+    range = ((now - 10.minutes)..now)
+    visits.where(:created_at => range).count(:user_id, :distinct => true)
+  end
 end
