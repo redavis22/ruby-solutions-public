@@ -6,6 +6,11 @@ class Tag < ActiveRecord::Base
   has_many :taggings
   has_many :urls, :through => :taggings
 
+  def affix(url)
+    # this is a convenience
+    Tagging.affix_tag(url, tag)
+  end
+
   def most_popular_urls
     # this is the "real" way to do it
     urls
