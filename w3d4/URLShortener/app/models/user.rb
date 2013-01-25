@@ -13,5 +13,5 @@ class User < ActiveRecord::Base
   # `shortened_urls`, Rails would by default use `Visit`'s
   # `shortened_url` association. However, I wanted to further
   # distinguish visited from submitted urls.
-  has_many :visited_urls, :class_name => "ShortenedUrl", :through => :visits, :source => :shortened_url
+  has_many :visited_urls, :through => :visits, :source => :shortened_url
 end
