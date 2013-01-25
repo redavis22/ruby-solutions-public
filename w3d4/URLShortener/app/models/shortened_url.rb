@@ -31,6 +31,26 @@ class ShortenedUrl < ActiveRecord::Base
   # associated `visitor`.
   has_many :visitors, :through => :visits
 
+  def self.generate(user, long_url)
+    ShortenedUrl.create(
+      :submitter_id => user.id,
+      :long_url => long_url,
+      :short_url => ShortenedUrl.shorten(long_url))
+  end
+
+  def self.shorten(long_url)
+    while true do
+      # this generates a random 8 digit link like: "BfIaBtVl58A". It
+      # will be careful not to use characters invalid in a URL.
+      short_url = SecureRandom.urlsafe_base64(8)
+      # must not reuse a short_url, though this is vanishingly
+      # unlikely anyway.
+      break unless ShortenedUrl.where(:short_url => short_url).exists?
+    end
+
+    short_url
+  end
+
   def num_clicks
     visits.count
   end
