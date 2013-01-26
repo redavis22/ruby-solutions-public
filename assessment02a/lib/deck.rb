@@ -22,6 +22,7 @@ class Deck
   end
 
   def take(n)
+    raise "took too many cards" if count < n
     @cards.pop(n)
   end
 

@@ -47,6 +47,12 @@ describe Deck do
       deck.take(2)
       deck.count.should == 1
     end
+
+    it "doesn't allow you to take too many cards" do
+      expect do
+        deck.take(10)
+      end.to raise_error("took too many cards")
+    end
   end
 
   describe "#return" do
