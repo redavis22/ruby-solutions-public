@@ -87,5 +87,12 @@ describe Pile do
 
       pile.current_suit.should == :hearts
     end
+
+    it "affects what cards can be next played" do
+      played_card = Card.new(:diamonds, :eight)
+      pile.play_eight(played_card, :hearts)
+
+      pile.valid_play?(Card.new(:hearts, :four)).should be_true
+    end
   end
 end

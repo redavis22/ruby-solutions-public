@@ -11,7 +11,7 @@ class Pile
   end
 
   def valid_play?(card)
-    (top_card.suit == card.suit) ||
+    (current_suit == card.suit) ||
       (top_card.value == card.value) ||
       (card.value == :eight)
   end
