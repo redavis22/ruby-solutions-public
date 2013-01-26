@@ -143,31 +143,33 @@ describe AIPlayer do
     end
   end
 
-#  describe "#play_card_from_hand" do
-#    let(:pile) { Pile.new(Card.new(:hearts, :four)) }
-#
-#    let(:cards1) { [card, eight] }
-#    let(:cards2) { [eight, card] }
-#
-#    let(:card) { Card.new(:hearts, :three) }
-#    let(:eight) { Card.new(:diamonds, :eight) }
-#
-#    it "doesn't play eights ahead of ny other option" do
-#      # must never play eight, even if it is seen first.
-#      pile.should_not_receive(:play_eight).with(eight)
-#
-#      AIPlayer.new(cards1).play_card_from_hand(pile)
-#      AIPlayer.new(cards2).play_card_from_hand(pile)
-#    end
-#
-#    it "plays an eight if it must" do
-#      pile = Pile.new(Card.new(:clubs, :seven))
-#      player = AIPlayer.new(cards1)
-#
-#      player.should_receive(:favorite_suit).and_return(:hearts)
-#      pile.should_receive(:play_eight).with(eight, :hearts)
-#
-#      player.play_card_from_hand(pile)
-#    end
-#  end
+  describe "#play_card_from_hand" do
+    let(:pile) { Pile.new(Card.new(:hearts, :four)) }
+
+    let(:cards1) { [card, eight] }
+    let(:cards2) { [eight, card] }
+
+    let(:card) { Card.new(:hearts, :three) }
+    let(:eight) { Card.new(:diamonds, :eight) }
+
+    it "doesn't play eights ahead of ny other option" do
+      [cards1, cards2].each do |cards|
+        player = AIPlayer.new(cards)
+
+        # must never play eight, even if it is seen first.
+        player.should_not_receive(:play_card).with(pile, eight)
+
+        player.play_card_from_hand(pile)
+      end
+    end
+
+    it "plays an eight if it must" do
+      pile = Pile.new(Card.new(:clubs, :seven))
+      player = AIPlayer.new(cards1)
+
+      player.should_receive(:play_card).with(pile, eight)
+
+      player.play_card_from_hand(pile)
+    end
+  end
 end
