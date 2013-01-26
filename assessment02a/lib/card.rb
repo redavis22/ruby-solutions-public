@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# Represents a playing card
 class Card
   SUIT_STRINGS = {
     :clubs    => "♣",
@@ -40,10 +41,12 @@ class Card
     :ace   => 14
   }
 
+  # Returns an array of all suits
   def self.suits
     SUIT_STRINGS.keys
   end
 
+  # Returns an array of all values
   def self.values
     VALUE_STRINGS.keys
   end
@@ -58,6 +61,7 @@ class Card
     @suit, @value = suit, value
   end
 
+  # Compares two cards to see if they're equal on suit & value.
   def ==(other_card)
     (self.suit == other_card.suit) && (self.value == other_card.value)
   end
