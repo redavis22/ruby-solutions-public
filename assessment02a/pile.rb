@@ -14,4 +14,10 @@ class Pile
       (top_card.value == card.value) ||
       (card.value == :eight)
   end
+
+  def play(card)
+    raise "invalid play" unless valid_play?(card)
+    raise "must declare suit when playing eight" if card.value == :eight
+    @top_card = card
+  end
 end

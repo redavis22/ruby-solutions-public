@@ -40,4 +40,30 @@ describe Pile do
       pile.valid_play?(Card.new(:diamonds, :seven)).should be_false
     end
   end
+
+  describe "#play" do
+    it "changes top card on valid play" do
+      played_card = Card.new(:clubs, :seven)
+
+      pile.play(played_card)
+      pile.top_card.should == played_card
+    end
+
+    it "changes current suit on valid play" do
+      pile.play(Card.new(:diamonds, :deuce))
+      pile.current_suit.should == :diamonds
+    end
+
+    it "rejects an invalid play" do
+      expect do
+        pile.play(Card.new(:diamonds, :seven))
+      end.to raise_error("invalid play")
+    end
+
+    it "rejects an eight played this way" do
+      expect do
+        pile.play(Card.new(:diamonds, :eight))
+      end.to raise_error("must declare suit when playing eight")
+    end
+  end
 end
