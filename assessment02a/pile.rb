@@ -5,6 +5,10 @@ class Pile
     @top_card = top_card
   end
 
+  def current_suit
+    @top_card.suit
+  end
+
   def valid_play?(card)
     (top_card.suit == card.suit) ||
       (top_card.value == card.value) ||

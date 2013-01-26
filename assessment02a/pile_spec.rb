@@ -17,6 +17,12 @@ describe Pile do
     end
   end
 
+  describe "#current_suit" do
+    it "returns the top card suit (for non-eights)" do
+      pile.current_suit.should == :clubs
+    end
+  end
+
   describe "#valid_play?" do
     it "approves playing a card of the same suit" do
       pile.valid_play?(Card.new(:clubs, :three)).should be_true
