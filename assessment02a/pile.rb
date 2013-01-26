@@ -3,10 +3,11 @@ class Pile
 
   def initialize(top_card)
     @top_card = top_card
+    @eight_color = nil
   end
 
   def current_suit
-    @top_card.suit
+    @eight_color || @top_card.suit
   end
 
   def valid_play?(card)
@@ -19,5 +20,12 @@ class Pile
     raise "invalid play" unless valid_play?(card)
     raise "must declare suit when playing eight" if card.value == :eight
     @top_card = card
+    @eight_color = nil
+  end
+
+  def play_eight(card, suit_choice)
+    raise "must play eight" unless card.value == :eight
+    @top_card = card
+    @eight_color = suit_choice
   end
 end

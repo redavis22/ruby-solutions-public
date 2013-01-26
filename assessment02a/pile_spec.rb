@@ -66,4 +66,26 @@ describe Pile do
       end.to raise_error("must declare suit when playing eight")
     end
   end
+
+  describe "#play_eight" do
+    it "rejects a non-eight card" do
+      expect do
+        pile.play_eight(Card.new(:clubs, :three), :hearts)
+      end.to raise_error("must play eight")
+    end
+
+    it "accepts a played eight" do
+      played_card = Card.new(:diamonds, :eight)
+      pile.play_eight(played_card, :hearts)
+
+      pile.top_card.should == played_card
+    end
+
+    it "changes suit when an eight is played" do
+      played_card = Card.new(:diamonds, :eight)
+      pile.play_eight(played_card, :hearts)
+
+      pile.current_suit.should == :hearts
+    end
+  end
 end
