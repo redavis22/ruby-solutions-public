@@ -28,4 +28,15 @@ class AIPlayer
       end
     end
   end
+
+  def favorite_suit
+    favorite_suit, max_count = :clubs, 0
+
+    Card.suits.each do |suit|
+      suit_count = @cards.map(&:suit).count(suit)
+      favorite_suit, max_count = suit, suit_count if suit_count > max_count
+    end
+
+    favorite_suit
+  end
 end

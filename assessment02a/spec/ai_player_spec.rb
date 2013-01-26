@@ -93,4 +93,14 @@ describe AIPlayer do
       end
     end
   end
+
+  describe "#favorite suit" do
+    it "computes the suit player has the most of" do
+      AIPlayer.new([
+          Card.new(:hearts, :five),
+          Card.new(:diamonds, :four),
+          Card.new(:hearts, :four)
+        ]).favorite_suit.should == :hearts
+    end
+  end
 end
