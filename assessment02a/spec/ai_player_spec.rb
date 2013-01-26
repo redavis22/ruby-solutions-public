@@ -140,4 +140,7 @@ describe AIPlayer do
       end
     end
   end
+
+  describe "#play_turn" do
+  end
 end

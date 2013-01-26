@@ -36,10 +36,13 @@ class AIPlayer
     @cards.delete(card)
   end
 
+  # Draw a card from the deck into player's hand.
   def draw_from(deck)
     @cards << deck.take(1).first
   end
 
+  # Choose a card from the player's hand to play; prefer non-eights to
+  # eights (save those!). Return nil if no possible play.
   def choose_card(pile)
     @cards.each do |card|
       if card.value != :eight && pile.valid_play?(card)
