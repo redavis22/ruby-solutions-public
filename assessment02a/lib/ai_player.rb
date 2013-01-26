@@ -52,4 +52,18 @@ class AIPlayer
 
     @cards.select { |card| card.value == :eight }.first
   end
+
+  def play_turn(pile, deck)
+    loop do
+      chosen_card = choose_card(pile)
+      if not chosen_card.nil?
+        play_card(pile, chosen_card)
+        return
+      elsif deck.count > 0
+        draw_from(deck)
+      else
+        return
+      end
+    end
+  end
 end
