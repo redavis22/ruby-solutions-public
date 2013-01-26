@@ -27,6 +27,7 @@ class AIPlayer
   # Plays a card from hand to the pile, removing it from the hand.
   def play_card(pile, card)
     raise "cannot play card outside your hand" unless @cards.include?(card)
+
     if card.value == :eight
       pile.play_eight(card, favorite_suit)
     else
@@ -38,16 +39,14 @@ class AIPlayer
 
   # Draw a card from the deck into player's hand.
   def draw_from(deck)
-    @cards << deck.take(1).first
+    @cards += deck.take(1)
   end
 
   # Choose a card from the player's hand to play; prefer non-eights to
   # eights (save those!). Return nil if no possible play.
   def choose_card(pile)
     @cards.each do |card|
-      if card.value != :eight && pile.valid_play?(card)
-        return card
-      end
+      return card if (card.value != :eight) && pile.valid_play?(card)
     end
 
     @cards.select { |card| card.value == :eight }.first
@@ -58,11 +57,11 @@ class AIPlayer
       chosen_card = choose_card(pile)
       if not chosen_card.nil?
         play_card(pile, chosen_card)
-        return
+        break
       elsif deck.count > 0
         draw_from(deck)
       else
-        return
+        break
       end
     end
   end

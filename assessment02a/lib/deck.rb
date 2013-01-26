@@ -15,13 +15,13 @@ class Deck
     all_cards
   end
 
+  def initialize(cards = Deck.all_cards)
+    @cards = cards
+  end
+
   # Returns the number of cards in the deck
   def count
     @cards.count
-  end
-
-  def initialize(cards = Deck.all_cards)
-    @cards = cards
   end
 
   # Takes `n` cards from the top of the deck.
