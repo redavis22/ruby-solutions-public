@@ -1,7 +1,6 @@
 require 'rspec'
 require 'ai_player'
 require 'card'
-require 'pile'
 
 describe AIPlayer do
   describe "#initialize" do
@@ -22,74 +21,67 @@ describe AIPlayer do
     end
   end
 
-  describe "#play" do
+  let(:pile) { double("pile") }
+  describe "#choose_card_from_hand" do
     subject(:player) { AIPlayer.new([only_card]) }
+    subject(:only_card) { double("only_card") }
 
-    let(:pile) { Pile.new(Card.new(:diamonds, :three)) }
-    let(:deck) { double("deck") }
+    it "plays a legal card of appropriate suit if possible" do
+      pile.should_receive(:valid_play?).with(only_card).and_return(true)
+      player.choose_card_from_hand(pile).should == only_card
+    end
 
-    context "with playable card (by suit)" do
-      let(:only_card) { Card.new(:diamonds, :four) }
+    it "returns nil if no such playable card" do
+      pile.should_receive(:valid_play?).with(only_card).and_return(false)
+      player.choose_card_from_hand(pile).should == nil
+    end
+  end
 
-      it "plays a legal card of appropriate suit if possible" do
-        pile.should_receive(:play).with(only_card)
-        player.play(pile, deck)
+  describe "#draw_card_to_play" do
+    subject(:player) { AIPlayer.new([]) }
+
+    let(:card1) { double("card1") }
+    let(:deck) do
+      Deck.new([
+          card1,
+          double("card2"),
+          double("card3")
+        ])
+    end
+
+    context "with deck containing a playable card" do
+      before do
+        pile.stub(:valid_play?).and_return { |card| card == card1 }
       end
 
-      it "removes a played card from hand" do
-        player.play(pile, deck)
-        player.cards.count.should == 0
+      it "draws until a playable card is drawn" do
+        pile.should_receive(:valid_play?).exactly(3)
+
+        player.draw_card_to_play(pile, deck)
+      end
+
+      it "adds unused cards to hand" do
+        player.draw_card_to_play(pile, deck)
+        player.cards.count.should == 2
+      end
+
+      it "returns the playable card" do
+        player.draw_card_to_play(pile, deck).should == card1
       end
     end
 
-    context "with playable card (by value)" do
-      let(:only_card) { Card.new(:clubs, :three) }
-
-      it "plays a legal card of appropriate value if possible" do
-        pile.should_receive(:play).with(only_card)
-        player.play(pile, deck)
-      end
-    end
-
-    context "without playable card in hand" do
-      let(:only_card) { Card.new(:clubs, :six) }
-
-      context "with deck with playable card in it" do
-        let(:playable_card) { Card.new(:clubs, :three) }
-
-        let(:garbage_cards) do [
-            Card.new(:clubs, :four),
-            Card.new(:clubs, :five)
-          ]
-        end
-
-        let(:deck) { Deck.new([playable_card] + garbage_cards) }
-
-        it "draws cards from the deck until one can be played" do
-          # hit the deck twice in vain, then draw in playable care
-          deck.should_receive(:take).with(1).exactly(3).times.and_call_original
-          pile.should_receive(:play).with(playable_card)
-
-          player.play(pile, deck)
-
-          # should have added two cards to our hand
-          player.cards =~ [only_card] + garbage_cards
-        end
+    context "deck doesn't contain playable card" do
+      before do
+        pile.stub(:valid_play?).and_return(false)
       end
 
-      context "deck without useful card" do
-        let(:garbage_card) { Card.new(:clubs, :four) }
-        let(:deck) do
-          Deck.new([garbage_card])
-        end
+      it "draws all cards into hand" do
+        player.draw_card_to_play(pile, deck)
+        player.cards.count.should == 3
+      end
 
-        it "takes cards until passes the turn" do
-          deck.should_receive(:take).once.and_call_original
-          pile.should_not_receive(:play)
-
-          player.play(pile, deck)
-          player.cards =~ [only_card, garbage_card]
-        end
+      it "returns nil" do
+        player.draw_card_to_play(pile, deck).should == nil
       end
     end
   end

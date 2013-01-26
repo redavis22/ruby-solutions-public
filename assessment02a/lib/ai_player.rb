@@ -9,24 +9,27 @@ class AIPlayer
     AIPlayer.new(deck.take(8))
   end
 
-  def play(pile, deck)
+  def choose_card_from_hand(pile)
     @cards.each do |card|
       if pile.valid_play?(card)
-        pile.play(card)
-        cards.delete(card)
-        return
+        return card
       end
     end
 
+    nil
+  end
+
+  def draw_card_to_play(pile, deck)
     while deck.count > 0
       card = deck.take(1).first
       if pile.valid_play?(card)
-        pile.play(card)
-        break
+        return card
       else
         @cards << card
       end
     end
+
+    nil
   end
 
   def favorite_suit
