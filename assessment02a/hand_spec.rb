@@ -1,5 +1,6 @@
 require 'rspec'
 require 'card'
+require 'deck'
 require 'hand'
 
 describe Hand do
@@ -12,6 +13,15 @@ describe Hand do
         ])
 
       hand.count.should == 3
+    end
+  end
+
+  describe "::deal_hand" do
+    it "draws eight cards from a deck" do
+      deck = Deck.new
+      hand = Hand::deal_hand(deck)
+
+      hand.count.should == 8
     end
   end
 end
