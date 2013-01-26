@@ -51,24 +51,31 @@ describe AIPlayer do
       end
     end
 
-    it "draws cards from the deck until one can be played" do
-      only_card = Card.new(:clubs, :six)
-      player = AIPlayer.new([only_card])
+    context "without playable card in hand" do
+      let(:only_card) { Card.new(:clubs, :six) }
 
-      playable_card = Card.new(:clubs, :three)
-      deck = Deck.new([
-          playable_card,
-          Card.new(:clubs, :four),
-          Card.new(:clubs, :five),
-        ])
+      context "with deck with playable card in it" do
+        let(:playable_card) { Card.new(:clubs, :three) }
 
-      deck.should_receive(:take).with(1).exactly(3).times.and_call_original
-      pile.should_receive(:play).with(playable_card)
+        let(:garbage_cards) do [
+            Card.new(:clubs, :four),
+            Card.new(:clubs, :five)
+          ]
+        end
 
-      player.play(pile, deck)
+        let(:deck) { Deck.new([playable_card] + garbage_cards) }
 
-      # should have added two cards to our hand
-      player.cards.count.should == 3
+        it "draws cards from the deck until one can be played" do
+          # hit the deck twice in vain, then draw in playable care
+          deck.should_receive(:take).with(1).exactly(3).times.and_call_original
+          pile.should_receive(:play).with(playable_card)
+
+          player.play(pile, deck)
+
+          # should have added two cards to our hand
+          player.cards =~ [only_card] + garbage_cards
+        end
+      end
     end
   end
 end
