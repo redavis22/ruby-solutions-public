@@ -13,7 +13,19 @@ describe Deck do
     end
   end
 
-  subject(:deck) { Deck.new }
+  describe "#initialize" do
+    it "by default fills itself with 52 cards" do
+      deck = Deck.new
+      deck.count.should == 52
+    end
 
-  its(:count) { should == 52 }
+    it "can be initialized with an array of cards" do
+      deck = Deck.new([
+          Card.new(:spades, :deuce),
+          Card.new(:hearts, :three),
+          Card.new(:diamonds, :jack)
+        ])
+      deck.count.should == 3
+    end
+  end
 end
