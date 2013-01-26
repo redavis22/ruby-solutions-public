@@ -1,11 +1,8 @@
 require 'rspec/core/rake_task'
 
 RSpec::Core::RakeTask.new(:spec) do |t|
-  t.pattern = ARGV[2]
   t.rspec_opts = ["--format documentation", "--color", "--order=default"]
-
-  # rake spec . deck_spec.rb
-  t.rspec_opts << "-I #{ARGV[1]}"
+  t.pattern = ARGV[1] if ARGV.count > 1
 end
 
 task :default => :spec
