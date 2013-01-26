@@ -79,4 +79,12 @@ class Deck
 
     all_cards
   end
+
+  def count
+    @cards.count
+  end
+
+  def initialize
+    @cards = Deck.all_cards
+  end
 end

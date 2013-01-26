@@ -12,4 +12,8 @@ describe Deck do
         .uniq.count.should == all_cards.count
     end
   end
+
+  subject(:deck) { Deck.new }
+
+  its(:count) { should == 52 }
 end
