@@ -29,15 +29,15 @@ describe Deck do
     end
   end
 
-  describe "#take" do
-    let(:deck) do
-      Deck.new([
-          Card.new(:spades, :deuce),
-          Card.new(:hearts, :three),
-          Card.new(:diamonds, :jack)
-        ])
-    end
+  let(:deck) do
+    Deck.new([
+        Card.new(:spades, :deuce),
+        Card.new(:hearts, :three),
+        Card.new(:diamonds, :jack)
+      ])
+  end
 
+  describe "#take" do
     # **use the back of the cards array as the top**
     it "takes cards off the top of the deck" do
       deck.take(1).should == [Card.new(:diamonds, :jack)]
@@ -46,6 +46,31 @@ describe Deck do
     it "removes cards from deck on take" do
       deck.take(2)
       deck.count.should == 1
+    end
+  end
+
+  describe "#return" do
+    let(:more_cards) do
+      [ Card.new(:hearts, :four),
+        Card.new(:hearts, :five),
+        Card.new(:hearts, :six) ]
+    end
+
+    it "should return cards to the deck" do
+      deck.return(more_cards)
+      deck.count.should == 6
+    end
+
+    it "should not destroy the passed array" do
+      deck.return(more_cards)
+      more_cards.count.should == 3
+    end
+
+    it "should add new cards to the bottom of the deck" do
+      deck.return(more_cards)
+      deck.take(3) # toss 3 cards away
+
+      deck.take(3).should =~ more_cards
     end
   end
 end
