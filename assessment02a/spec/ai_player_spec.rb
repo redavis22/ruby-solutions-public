@@ -1,6 +1,7 @@
 require 'rspec'
 require 'ai_player'
 require 'card'
+require 'pile'
 
 describe AIPlayer do
   describe "#initialize" do
@@ -24,7 +25,7 @@ describe AIPlayer do
   let(:pile) { double("pile") }
   describe "#choose_card_from_hand" do
     subject(:player) { AIPlayer.new([only_card]) }
-    subject(:only_card) { double("only_card") }
+    subject(:only_card) { Card.new(:hearts, :seven) }
 
     it "plays a legal card of appropriate suit if possible" do
       pile.should_receive(:valid_play?).with(only_card).and_return(true)
@@ -93,6 +94,28 @@ describe AIPlayer do
           Card.new(:diamonds, :four),
           Card.new(:hearts, :four)
         ]).favorite_suit.should == :hearts
+    end
+  end
+
+  describe "#choose_card_from_hand" do
+    let(:pile) { Pile.new(Card.new(:hearts, :four)) }
+
+    let(:cards1) { [card, eight] }
+    let(:cards2) { [eight, card] }
+
+    let(:card) { Card.new(:hearts, :three) }
+    let(:eight) { Card.new(:diamonds, :eight) }
+
+    it "doesn't play eights ahead of ny other option" do
+      # must never play eight, even if it is seen first.
+      AIPlayer.new(cards1).choose_card_from_hand(pile).should == card
+      AIPlayer.new(cards2).choose_card_from_hand(pile).should == card
+    end
+
+    it "plays an eight if it must" do
+      pile = Pile.new(Card.new(:clubs, :seven))
+
+      AIPlayer.new(cards1).choose_card_from_hand(pile).should == eight
     end
   end
 end

@@ -10,13 +10,17 @@ class AIPlayer
   end
 
   def choose_card_from_hand(pile)
+    eights = []
+
     @cards.each do |card|
-      if pile.valid_play?(card)
+      if card.value == :eight
+        eights << card
+      elsif pile.valid_play?(card)
         return card
       end
     end
 
-    nil
+    eights.first
   end
 
   def draw_card_to_play(pile, deck)
