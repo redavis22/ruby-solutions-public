@@ -1,5 +1,5 @@
 require 'rspec'
-require 'card'
+require 'deck'
 
 describe Deck do
   describe "::all_cards" do
