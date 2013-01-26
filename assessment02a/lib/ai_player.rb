@@ -9,6 +9,16 @@ class AIPlayer
     AIPlayer.new(deck.take(8))
   end
 
+  def play_card(pile, card)
+    if card.value == :eight
+      pile.play_eight(card, favorite_suit)
+    else
+      pile.play(card)
+    end
+
+    # TODO: delete card?
+  end
+
   def play_card_from_hand(pile)
     eights = []
 
@@ -16,21 +26,20 @@ class AIPlayer
       if card.value == :eight
         eights << card
       elsif pile.valid_play?(card)
-        pile.play(card)
-        @cards.delete(card)
+        play_card(pile, card)
         return true
       end
     end
 
-    pile.play_eight(eights.first, favorite_suit) unless eights.empty?
-
+    play_card(pile, eights.first) unless eights.empty?
     !eights.empty?
   end
 
-  def draw_card_to_play(pile, deck)
+  def play_card_from_deck(pile, deck)
     while deck.count > 0
       card = deck.take(1).first
       if pile.valid_play?(card)
+        play_card(pile, card)
         return card
       else
         @cards << card
