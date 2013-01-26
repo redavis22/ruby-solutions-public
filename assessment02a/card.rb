@@ -91,4 +91,8 @@ class Deck
   def take(n)
     @cards.pop(n)
   end
+
+  def return(cards)
+    @cards.unshift(*cards)
+  end
 end
