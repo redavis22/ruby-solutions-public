@@ -1,6 +1,8 @@
 require 'rspec'
+
 require 'ai_player'
 require 'card'
+require 'deck'
 require 'pile'
 
 describe AIPlayer do
