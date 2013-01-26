@@ -1,7 +1,7 @@
 require 'rspec/core/rake_task'
 
 RSpec::Core::RakeTask.new(:spec) do |t|
-  t.rspec_opts = ["--format documentation", "--color", "--order=default"]
+  t.rspec_opts = ["--format documentation", "--color", "--order=default", "--fail-fast"]
   t.pattern = ARGV[1] if ARGV.count > 1
 end
 
