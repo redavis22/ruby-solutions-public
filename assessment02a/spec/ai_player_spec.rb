@@ -118,4 +118,39 @@ describe AIPlayer do
       AIPlayer.new(cards1).choose_card_from_hand(pile).should == eight
     end
   end
+
+  describe "#play" do
+    subject(:player) { AIPlayer.new([]) }
+
+    context "with a playable card in hand" do
+      let(:pile) { double("pile") }
+
+      before do
+        player
+          .should_receive(:choose_card_from_hand)
+          .with(pile)
+          .once
+          .and_return(card)
+      end
+
+      context "with non-eight" do
+        let(:card) { Card.new(:spades, :four) }
+
+        it "plays a card from the hand if possible" do
+          pile.should_receive(:play).with(card)
+          player.play(double("deck"), pile)
+        end
+      end
+
+      context "with eight" do
+        let(:card) { Card.new(:spades, :eight) }
+
+        it "plays an eight and chooses the favorite suit" do
+          player.should_receive(:favorite_suit).and_return(:hearts)
+          pile.should_receive(:play_eight).with(card, :hearts)
+          player.play(double("deck"), pile)
+        end
+      end
+    end
+  end
 end

@@ -9,6 +9,15 @@ class AIPlayer
     AIPlayer.new(deck.take(8))
   end
 
+  def play(deck, pile)
+    card_to_play = choose_card_from_hand(pile)
+    if card_to_play.value == :eight
+      pile.play_eight(card_to_play, favorite_suit)
+    else
+      pile.play(card_to_play)
+    end
+  end
+
   def choose_card_from_hand(pile)
     eights = []
 
