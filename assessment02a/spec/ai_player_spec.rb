@@ -76,6 +76,21 @@ describe AIPlayer do
           player.cards =~ [only_card] + garbage_cards
         end
       end
+
+      context "deck without useful card" do
+        let(:garbage_card) { Card.new(:clubs, :four) }
+        let(:deck) do
+          Deck.new([garbage_card])
+        end
+
+        it "takes cards until passes the turn" do
+          deck.should_receive(:take).once.and_call_original
+          pile.should_not_receive(:play)
+
+          player.play(pile, deck)
+          player.cards =~ [only_card, garbage_card]
+        end
+      end
     end
   end
 end

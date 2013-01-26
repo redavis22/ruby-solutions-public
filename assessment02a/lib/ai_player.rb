@@ -18,7 +18,7 @@ class AIPlayer
       end
     end
 
-    while true
+    while deck.count > 0
       card = deck.take(1).first
       if pile.valid_play?(card)
         pile.play(card)
