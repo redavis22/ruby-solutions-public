@@ -94,5 +94,15 @@ describe Pile do
 
       pile.valid_play?(Card.new(:hearts, :four)).should be_true
     end
+
+    it "doesn't affect suits of subsequent plays" do
+      pile.play_eight(Card.new(:diamonds, :eight), :hearts)
+
+      pile.play(Card.new(:hearts, :four))
+      pile.play(Card.new(:clubs, :four))
+
+      # eight's choice of suit doesn't last forever
+      pile.valid_play?(Card.new(:clubs, :five)).should be_true
+    end
   end
 end
