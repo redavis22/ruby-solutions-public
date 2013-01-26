@@ -23,18 +23,32 @@ describe AIPlayer do
   end
 
   let(:pile) { double("pile") }
-  describe "#choose_card_from_hand" do
+  describe "#play_card_from_hand" do
     subject(:player) { AIPlayer.new([only_card]) }
     subject(:only_card) { Card.new(:hearts, :seven) }
 
-    it "plays a legal card of appropriate suit if possible" do
-      pile.should_receive(:valid_play?).with(only_card).and_return(true)
-      player.choose_card_from_hand(pile).should == only_card
+    context "with playable card" do
+      before do
+        pile.stub(:valid_play?).with(only_card).and_return(true)
+        pile.stub(:play).with(only_card)
+      end
+
+      it "plays a legal card of appropriate suit if possible" do
+        pile.should_receive(:play).with(only_card)
+        player.play_card_from_hand(pile).should be_true
+      end
+
+      it "removes card from hand" do
+        player.play_card_from_hand(pile).should be_true
+
+        player.cards.should_not include(only_card)
+      end
     end
 
     it "returns nil if no such playable card" do
       pile.should_receive(:valid_play?).with(only_card).and_return(false)
-      player.choose_card_from_hand(pile).should == nil
+      pile.should_not_receive(:play)
+      player.play_card_from_hand(pile).should be_false
     end
   end
 
@@ -97,7 +111,7 @@ describe AIPlayer do
     end
   end
 
-  describe "#choose_card_from_hand" do
+  describe "#play_card_from_hand" do
     let(:pile) { Pile.new(Card.new(:hearts, :four)) }
 
     let(:cards1) { [card, eight] }
@@ -108,49 +122,20 @@ describe AIPlayer do
 
     it "doesn't play eights ahead of ny other option" do
       # must never play eight, even if it is seen first.
-      AIPlayer.new(cards1).choose_card_from_hand(pile).should == card
-      AIPlayer.new(cards2).choose_card_from_hand(pile).should == card
+      pile.should_not_receive(:play_eight).with(eight)
+
+      AIPlayer.new(cards1).play_card_from_hand(pile)
+      AIPlayer.new(cards2).play_card_from_hand(pile)
     end
 
     it "plays an eight if it must" do
       pile = Pile.new(Card.new(:clubs, :seven))
+      player = AIPlayer.new(cards1)
 
-      AIPlayer.new(cards1).choose_card_from_hand(pile).should == eight
-    end
-  end
+      player.should_receive(:favorite_suit).and_return(:hearts)
+      pile.should_receive(:play_eight).with(eight, :hearts)
 
-  describe "#play" do
-    subject(:player) { AIPlayer.new([]) }
-
-    context "with a playable card in hand" do
-      let(:pile) { double("pile") }
-
-      before do
-        player
-          .should_receive(:choose_card_from_hand)
-          .with(pile)
-          .once
-          .and_return(card)
-      end
-
-      context "with non-eight" do
-        let(:card) { Card.new(:spades, :four) }
-
-        it "plays a card from the hand if possible" do
-          pile.should_receive(:play).with(card)
-          player.play(double("deck"), pile)
-        end
-      end
-
-      context "with eight" do
-        let(:card) { Card.new(:spades, :eight) }
-
-        it "plays an eight and chooses the favorite suit" do
-          player.should_receive(:favorite_suit).and_return(:hearts)
-          pile.should_receive(:play_eight).with(card, :hearts)
-          player.play(double("deck"), pile)
-        end
-      end
+      player.play_card_from_hand(pile)
     end
   end
 end
