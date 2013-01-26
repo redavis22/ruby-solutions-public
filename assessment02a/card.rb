@@ -87,4 +87,8 @@ class Deck
   def initialize(cards = Deck.all_cards)
     @cards = cards
   end
+
+  def take(n)
+    @cards.pop(n)
+  end
 end

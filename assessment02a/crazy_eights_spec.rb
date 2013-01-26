@@ -28,4 +28,24 @@ describe Deck do
       deck.count.should == 3
     end
   end
+
+  describe "#take" do
+    let(:deck) do
+      Deck.new([
+          Card.new(:spades, :deuce),
+          Card.new(:hearts, :three),
+          Card.new(:diamonds, :jack)
+        ])
+    end
+
+    # **use the back of the cards array as the top**
+    it "takes cards off the top of the deck" do
+      deck.take(1).should == [Card.new(:diamonds, :jack)]
+    end
+
+    it "removes cards from deck on take" do
+      deck.take(2)
+      deck.count.should == 1
+    end
+  end
 end
