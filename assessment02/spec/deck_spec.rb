@@ -14,8 +14,21 @@ describe Deck do
     end
   end
 
+  it "should not expose its cards" do
+    deck.should_not respond_to(:cards)
+  end
+
   it "contains all 52 cards by default" do
-    deck.cards.count.should == 52
+    deck.count.should == 52
+  end
+
+  it "lets us peek at the top card without taking it" do
+    deck.peek.should be_a(Card)
+    deck.count.should == 52
+  end
+
+  it "lets us test if a card is present in the deck" do
+    deck.include?(deck.peek).should be_true
   end
 
   it "can be initialized with an array of cards" do
@@ -24,13 +37,13 @@ describe Deck do
       Card.new(:spades, :king)
     ]
 
-    Deck.new(cards).cards.count == 2
+    Deck.new(cards.dup).take(2).should == cards
   end
 
   it "shuffles the cards" do
     expect do
       deck.shuffle
-    end.to change{deck.cards}
+    end.to change{deck.peek}
   end
 
   describe "#take" do
@@ -44,10 +57,16 @@ describe Deck do
     it "removes those cards from deck" do
       taken_cards = deck.take(5)
 
-      deck.cards.count.should == 47
+      deck.count.should == 47
       taken_cards.each do |card|
-        deck.cards.include?(card).should be_false
+        deck.include?(card).should be_false
       end
+    end
+
+    it "doesn't let the user take too many cards" do
+      expect do
+        deck.take(100)
+      end.to raise_error("not enough cards")
     end
   end
 
@@ -57,7 +76,10 @@ describe Deck do
     it "returns cards to deck" do
       deck.return(taken_cards)
 
-      deck.cards.count.should == 52
+      deck.count.should == 52
+      taken_cards.each do |card|
+        deck.should include(card)
+      end
     end
 
     it "returns cards to bottom of deck" do

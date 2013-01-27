@@ -7,10 +7,20 @@ class Deck
     end
   end
 
-  attr_reader :cards
-
   def initialize(cards = Deck.all_cards)
     @cards = cards
+  end
+
+  def count
+    @cards.count
+  end
+
+  def peek
+    @cards.last
+  end
+
+  def include?(card)
+    @cards.include?(card)
   end
 
   def shuffle
@@ -18,6 +28,7 @@ class Deck
   end
 
   def take(n)
+    raise "not enough cards" if n > count
     @cards.pop(n)
   end
 

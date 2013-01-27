@@ -14,7 +14,7 @@ describe Hand do
       deck = Deck.new(cards.dup)
       hand = Hand.deal_from(deck)
 
-      deck.cards.count.should == 0
+      deck.count.should == 0
       hand.cards.should =~ cards
     end
   end
