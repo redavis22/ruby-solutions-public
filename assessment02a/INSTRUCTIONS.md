@@ -21,7 +21,3 @@ In a nutshell:
 
 First solve the `Deck` specs: `rake spec spec/deck_spec.rb`. The move
 on to `Pile`, and finally `AIPlayer`.
-
-RSpec's `--fail-fast` mode is on by default; it produces less output
-by stopping on the first failed test. If you prefer to turn it off,
-remove that flag from the Rakefile.
