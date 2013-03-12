@@ -7,7 +7,7 @@ figure out what you don't know how to do, not just look up the answer
 in a book.
 
 **Don't ever bother memorizing anything in this class**. You can only
-learn by practicing cnostantly. You'll struggle with some exercises:
+learn by practicing constantly. You'll struggle with some exercises:
 struggle with them more, or ask for help.
 
 But when you've done the exercises, **absolutely look at the solutions
