@@ -72,8 +72,8 @@ def fibs_rec(n)
 end
 
 def bsearch(nums, target)
-  # -1 signals not found; can't find anything in an empty array
-  return -1 if nums.count == 0
+  # nil if not found; can't find anything in an empty array
+  return nil if nums.count == 0
 
   probe_index = nums.length / 2
   case target <=> nums[probe_index]
@@ -84,12 +84,9 @@ def bsearch(nums, target)
     probe_index # found it!
   when 1
     # search in the right; don't forget that the right subarray starts
-    # at `probe_index + 1`.
+    # at `probe_index + 1`, so we need to offset by that amount.
     subproblem_answer = bsearch(nums[(probe_index + 1)..-1], target)
-
-    # be careful! -1 can be returned for not found, in which case we
-    # don't want to add to this.
-    (subproblem_answer == -1) ? -1 : (probe_index + 1) + subproblem_answer
+    (subproblem_answer.nil?) ? nil : (probe_index + 1) + subproblem_answer
   end
 
   # note that the array size is always decreasing through each
