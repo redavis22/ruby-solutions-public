@@ -54,9 +54,9 @@ class TowersOfHanoi
     from_stack, to_stack = @stacks.values_at(from_stack_num, to_stack_num)
 
     # just ignore moves from empty piles
-    return unless from_stack.count > 0
+    return if from_stack.empty?
     # ignore a move placing a large disk on top of a small one
-    return if to_stack.last < from_stack.last
+    return unless (to_stack.empty? || to_stack.last > from_stack.last)
 
     to_stack.push(from_stack.pop)
 
