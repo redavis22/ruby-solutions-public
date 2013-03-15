@@ -61,7 +61,10 @@ class Board
   end
 
   def over?
-    won? or drawn?
+    # style guide says to use `or`, but I (and many others) prefer to
+    # use `||` all the time. We don't like two ways to do something
+    # this simple.
+    won? || drawn?
   end
 
   def won?
