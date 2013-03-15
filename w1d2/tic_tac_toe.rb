@@ -182,7 +182,7 @@ class ComputerPlayer
   end
 
   def move(game, mark)
-    winner_move(game, mark) || random_move(game, mark)
+    winner_move(game, mark) or random_move(game, mark)
   end
 
   private
