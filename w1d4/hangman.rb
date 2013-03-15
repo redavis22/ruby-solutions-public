@@ -1,6 +1,14 @@
 class Hangman
   MAX_TRIES = 10
 
+  def self.human_v_computer(dictionary)
+    Hangman.new(HumanPlayer.new, ComputerPlayer.new(dictionary))
+  end
+
+  def self.computer_v_human(dictionary)
+    Hangman.new(HumanPlayer.new, ComputerPlayer.new(dictionary))
+  end
+
   def initialize(guesser, referee)
     @guesser, @referee = guesser, referee
   end
@@ -90,6 +98,10 @@ class HumanPlayer
 end
 
 class ComputerPlayer
+  def self.player_with_dict_file(dict_file_name)
+    Computer.new(File.readlines(dict_file_name))
+  end
+
   def initialize(dictionary)
     @dictionary = dictionary
   end

@@ -18,8 +18,8 @@ class Mastermind
     code
   end
 
-  def play
-    @secret_code = Mastermind.generate_secret_code
+  def play(secret_code = Mastermind.generate_secret_code)
+    @secret_code = secret_code
     @turn = 0
 
     # for debugging purposes
@@ -36,8 +36,11 @@ class Mastermind
         puts "You're the best!"
         break
       else
-        puts "Near matches: #{near_matches(guess)}"
-        puts "Exact matches: #{exact_matches(guess)}"
+        exact_matches = exact_matches(guess)
+        near_matches = near_and_exact_matches(guess) - exact_matches
+
+        puts "Near matches: #{near_matches}"
+        puts "Exact matches: #{exact_matches}"
         puts "Try again!"
         @turn += 1
       end
@@ -83,16 +86,16 @@ class Mastermind
     matches
   end
 
-  def near_matches(guess)
+  def near_and_exact_matches(guess)
     # Hash.new(0) makes 0 the default value
-    near_matches =  Hash.new(0)
+    near_and_exact_matches = Hash.new(0)
 
     guess.each do |peg|
-      near_matches[peg] += 1 if @secret_code.include?(peg)
+      near_and_exact_matches[peg] += 1 if @secret_code.include?(peg)
     end
 
     deduped_near_matches = {}
-    near_matches.each do |peg, count|
+    near_and_exact_matches.each do |peg, count|
       # don't return more near matches than there are pegs of that color
       deduped_near_matches[peg] = [count, @secret_code.count(peg)].min
     end
