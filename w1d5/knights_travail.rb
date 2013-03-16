@@ -1,88 +1,69 @@
-class KnightsPath
-  attr_reader :start, :finish, :path
+require './tree_node'
 
-  def initialize(start, finish)
-    @start, @finish = [start, finish].map { |pos| convert_chess_position(pos) }
-    @path = []
-  end
+def build_move_tree(start_pos)
+  root_node = PolyTreeNode.new(start_pos)
 
-  def find_path
-    queue = [KnightNode.new(@start, nil)]
-    past_moves = []
+  visited_squares = [start_pos]
 
-    while knight = queue.shift
-      break if knight.position == @finish
+  nodes = [root_node]
+  until nodes.empty?
+    node = nodes.shift
 
-      past_moves << knight.position
-      next_moves = possible_next_moves(knight.position)
-      next_moves = prune_next_moves(next_moves, past_moves, queue)
+    current_pos = node.value
+    valid_moves(current_pos).each do |next_pos|
+      next if visited_squares.include?(next_pos)
 
-      queue += make_knight_nodes(next_moves, knight)
-    end
+      next_node = PolyTreeNode.new(next_pos)
+      node.add_child(next_node)
 
-    @path = build_path(knight)
-  end
-
-  def print_path
-    puts @path.map { |knight| convert_chess_position(knight.position) }
-  end
-
-  private
-
-  def build_path(knight)
-    knight.parent ? build_path(knight.parent) + [knight] : [knight]
-  end
-
-  def prune_next_moves(next_moves, past_moves, queue)
-    do_not_check = past_moves + queue.map(&:position)
-    next_moves.select { |pos| !do_not_check.include?(pos) }
-  end
-
-  def make_knight_nodes(positions, parent)
-    positions.map { |pos| KnightNode.new(pos, parent) }
-  end
-
-  def convert_chess_position(position)
-    if position.is_a?(String)
-      [('a'..'h').to_a.index(position[0]), position[1].to_i - 1]
-    else
-      "#{('a'..'h').to_a[position[0]]}#{(position[1] + 1).to_s}"
+      visited_squares << next_pos
+      nodes << next_node
     end
   end
 
-  def possible_next_moves(position)
-    all_next_moves(position).select { |pos| on_board?(pos) }
-  end
-
-  def all_next_moves(position)
-    [
-      [position[0] + 2, position[1] + 1],
-      [position[0] + 2, position[1] - 1],
-      [position[0] - 2, position[1] + 1],
-      [position[0] - 2, position[1] - 1],
-      [position[0] + 1, position[1] + 2],
-      [position[0] + 1, position[1] - 2],
-      [position[0] - 1, position[1] + 2],
-      [position[0] - 1, position[1] - 2]
-    ]
-  end
-
-  def on_board?(position)
-    position.all? { |coord| coord.between?(0, 7) }
-  end
+  root_node
 end
 
-class KnightNode
-  attr_reader :position, :parent
-  def initialize(position, parent)
-    @position, @parent = position, parent
+def valid_moves(start_pos)
+  valid_moves = []
+
+  cur_x, cur_y = start_pos
+
+  [ [-2, -1],
+    [-2,  1],
+    [-1, -2],
+    [-1,  2],
+    [ 1, -2],
+    [ 1,  2],
+    [ 2, -1],
+    [ 2,  1] ].each do |(dx, dy)|
+
+    new_pos = [cur_x + dx, cur_y + dy]
+
+    valid_moves << new_pos if new_pos.all? { |coord| coord.between?(0, 7) }
   end
+
+  valid_moves
 end
 
-if ARGV.length == 2
-  pathfinder = KnightsPath.new(ARGV[0], ARGV[1])
-  pathfinder.find_path
-  pathfinder.print_path
-else
-  puts "Please enter 2 chess positions on the command line ('e4 a6')"
+def build_path(node)
+  moves = []
+
+  current_node = node
+  until current_node.parent.nil?
+    moves << current_node.value
+
+    current_node = current_node.parent
+  end
+
+  # once more; the first position :-)
+  moves << current_node.value
+
+  moves.reverse
+end
+
+def find_path(start_pos, end_pos)
+  move_tree = build_move_tree(start_pos)
+  end_node = move_tree.bfs(end_pos)
+  build_path(end_node)
 end
