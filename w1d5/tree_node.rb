@@ -24,6 +24,10 @@ module Searchable
 
     nil
   end
+
+  def count
+    1 + children.map(&:count).inject(0, :+)
+  end
 end
 
 class BinaryTreeNode
